@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Program {
+public class MainFunctionForJohn {
 
 	private static String psycInfoLabelMeaningFile = "PsycInfoLabelMeaning.txt";
 
