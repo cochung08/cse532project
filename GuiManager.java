@@ -129,31 +129,7 @@ public class GuiManager {
 		c.weightx = 1;
 		baseContainer.add(okButton, c);
 
-		// for (int i = 0; i < size; ++i) {
-		// c.gridy = i;
-		//
-		// // Create the slider
-		// JLabel field = new JLabel("IDd:");
-		//
-		// c.fill = GridBagConstraints.CENTER;
-		// c.gridx = 0;
-		// c.weightx = 1;
-		// baseContainer.add(field, c);
-		//
-		// // Create the checkbox
-		//
-		// // Create the current label
-		// JTextField value = new JTextField();
-		// value.setBorder(BorderFactory.createLineBorder(Color.red));
-		// c.fill = GridBagConstraints.HORIZONTAL;
-		// c.gridx = 1;
-		// c.weightx = 8;
-		// baseContainer.add(value, c);
-		// }
-
-		//
-
-		baseContainer.setSize(1000, 500); // set frame size
+		baseContainer.setSize(1000, 500);
 		baseContainer.setVisible(true); //
 
 	}

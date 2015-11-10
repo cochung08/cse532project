@@ -1,6 +1,3 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Vector;
@@ -13,18 +10,6 @@ public class QueryFunctions {
 			LinkedHashMap<String, String> updateMap) {
 
 		try {
-
-			// Vector<String> fieldInArticleTable = new Vector<String>();
-			//
-			// Statement st = DataLoading.conn.createStatement();
-			// ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
-			// + tableName);
-			// ResultSetMetaData md = rset.getMetaData();
-			//
-			// for (int i = 2; i <= md.getColumnCount(); i++) {
-			//
-			// fieldInArticleTable.add(md.getColumnLabel(i));
-			// }
 
 			String tmp0 = "UPDATE " + tableName + " SET ";
 
@@ -49,7 +34,7 @@ public class QueryFunctions {
 			int j = 1;
 			for (String key : updateMap.keySet()) {
 				if (!key.equalsIgnoreCase("ARTICLE_ID")) {
-					ps_update.setString(j , updateMap.get(key));
+					ps_update.setString(j, updateMap.get(key));
 					j++;
 				}
 
@@ -58,7 +43,7 @@ public class QueryFunctions {
 			ps_update.executeUpdate();
 			DataLoading.conn.commit();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 
