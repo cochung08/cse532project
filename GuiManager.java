@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -32,9 +32,7 @@ public class GuiManager {
 		}
 	}
 
-	public void showAuthorTable(HashMap<String, String> requestedData) {
-
-		final int size = 23;
+	public void showAuthorTable(LinkedHashMap<String, String> requestedData) {
 
 		JFrame baseContainer = new JFrame();
 		baseContainer.setLayout(new GridBagLayout());
@@ -43,7 +41,6 @@ public class GuiManager {
 		Vector<String> keyVector = new Vector<String>();
 		Vector<JTextField> valueVector = new Vector<JTextField>();
 
-		int i = 0;
 		for (final String key : requestedData.keySet()) {
 			// System.out.println(key + ": " + requestedData.get(key));
 			// c.gridy = i;
@@ -72,7 +69,6 @@ public class GuiManager {
 			c.gridx = 1;
 			c.weightx = 8;
 			baseContainer.add(value, c);
-			i++;
 
 			field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -115,14 +111,15 @@ public class GuiManager {
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				HashMap<String, String> updateMap = new HashMap<String, String>();
+				System.out.println("dd");
+				LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
 
 				for (int k = 0; k < keyVectorCopy.size(); k++) {
 					updateMap.put(keyVectorCopy.get(k), valueVectorCopy.get(k)
 							.getText());
 
 				}
-				QueryFunctions.updateArticleTable("1", updateMap);
+				QueryFunctions.updateArticleTable(updateMap);
 
 			}
 		});

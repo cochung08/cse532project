@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class MainFunctionForJohn {
 
@@ -27,19 +27,19 @@ public class MainFunctionForJohn {
 
 		DataLoading dataLoading = new DataLoading(databaseName, username,
 				password);
-		dataLoading.loadDataFromPudmed(pathname1);
-		dataLoading.loadDataFromCochrane(pathname2);
+//		dataLoading.loadDataFromPudmed(pathname1);
+//		dataLoading.loadDataFromCochrane(pathname2);
 
 		String searchTable = "article2";
 		String searchField = "ARTICLE_ID";
 		String searchValue = "2";
 
-		HashMap<String, String> requestedData = QueryFunctions.searchQuery(
-				searchTable, searchField, searchValue);
+		LinkedHashMap<String, String> requestedData = QueryFunctions
+				.searchQuery(searchTable, searchField, searchValue);
 
-		 GuiManager guiManager = new GuiManager();
-		 guiManager.showAuthorTable(requestedData);
-	
+		GuiManager guiManager = new GuiManager();
+		guiManager.showAuthorTable(requestedData);
+
 		// for (String key : requestedData.keySet()) {
 		// System.out.println(key + ": " + requestedData.get(key));
 		//
