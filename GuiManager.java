@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,10 +40,15 @@ public class GuiManager {
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
+		Vector<String> keyVector = new Vector<String>();
+		Vector<JTextField> valueVector = new Vector<JTextField>();
+
 		int i = 0;
 		for (final String key : requestedData.keySet()) {
 			// System.out.println(key + ": " + requestedData.get(key));
 			// c.gridy = i;
+
+			keyVector.add(key);
 
 			JButton field = new JButton(key + ":	");
 
@@ -60,6 +66,8 @@ public class GuiManager {
 			final String v1 = requestedData.get(key);
 			JTextField value = new JTextField(v1);
 			value.setBorder(BorderFactory.createLineBorder(Color.red));
+			valueVector.add(value);
+
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 1;
 			c.weightx = 8;
@@ -96,6 +104,33 @@ public class GuiManager {
 			});
 
 		}
+
+		JButton okButton = new JButton("ok	");
+
+		final Vector<String> keyVectorCopy = (Vector<String>) keyVector.clone();
+
+		final Vector<JTextField> valueVectorCopy = (Vector<JTextField>) valueVector
+				.clone();
+
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				HashMap<String, String> updateMap = new HashMap<String, String>();
+
+				for (int k = 0; k < keyVectorCopy.size(); k++) {
+					updateMap.put(keyVectorCopy.get(k), valueVectorCopy.get(k)
+							.getText());
+
+				}
+				QueryFunctions.updateArticleTable("1", updateMap);
+
+			}
+		});
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.weightx = 1;
+		baseContainer.add(okButton, c);
 
 		// for (int i = 0; i < size; ++i) {
 		// c.gridy = i;

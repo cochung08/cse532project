@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
-import java.util.HashMap;
 import java.util.Vector;
 
 public class DataLoading {
@@ -11,10 +10,9 @@ public class DataLoading {
 	static String authorTable = "author";
 	static String keywordTable = "keyword";
 
-	static PreparedStatement ps_search;
-	static PreparedStatement ps_article;
 	static PreparedStatement ps_author = null;
 	static PreparedStatement ps_keyword = null;
+	static PreparedStatement ps_article = null;
 
 	DataLoading(String databaseName, String user, String password) {
 
@@ -48,48 +46,6 @@ public class DataLoading {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-	}
-
-	public HashMap<String, String> searchQuery(String searchTable,
-			String searchField, String searchValue) {
-
-		try {
-			Vector<String> requestedData = new Vector<String>();
-			HashMap<String, String> fieldValue = new HashMap<String, String>();
-			;
-
-			String search_query = "SELECT * from " + searchTable + " where "
-					+ searchField + " = " + searchValue;
-
-			String[] fieldInArticleTable = { "CIT", "REF", "AU_CORR", "TITLE",
-					"JNL_TIT", "VOL", "ISSUE", "YEAR", "PG_ST", "PG_EN",
-					"LANG", "ABS", "PUBID", "DOI", "URL", "PUBTYPE", "FUND",
-					"RATE", "SCR", "FNLRATE", "FNLDESIGN", "MCNRATE", "MCNCONF" };
-
-			ps_search = conn.prepareStatement(search_query);
-			ResultSet rs = ps_search.executeQuery();
-			conn.commit();
-
-			while (rs.next()) {
-
-				for (int i = 0; i < 23; i++) {
-
-					String tmp = rs.getString(fieldInArticleTable[i]);
-					fieldValue.put(fieldInArticleTable[i], tmp);
-					// System.out.println(fieldInArticleTable[i] + ": " + tmp);
-				}
-
-			}
-			rs.close();
-
-			return fieldValue;
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
 		}
 
 	}
