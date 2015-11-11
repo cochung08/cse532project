@@ -10,6 +10,8 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 
 public class Article {
 	//private HashMap<String, String> fields;
+	
+	//
 	private boolean isEmpty = true;
 	private static String psycInfoLabelMeaningFile = "E:\\Study\\PhD\\CSE532-Theory of Database Systems\\Project\\PsycInfoLabelMeaning.txt";
 	private static String psycInfoFieldDesFile = "E:\\Study\\PhD\\CSE532-Theory of Database Systems\\Project\\PsycInfoFieldDescription.txt";
