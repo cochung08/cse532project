@@ -8,12 +8,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,16 +27,13 @@ import javax.swing.SwingConstants;
 
 public class GuiManager {
 
-	class Eavesdropper implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			System.out.println("hello");
-		}
-	}
+	static final String PUDMED = "Pubmed";
+	static final String COCHRANE = "Cochrane";
 
 	public void showAuthorTable(LinkedHashMap<String, String> requestedData) {
 
-		JFrame baseContainer = new JFrame();
+		final JFrame baseContainer = new JFrame();
+
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -128,6 +127,34 @@ public class GuiManager {
 		c.gridx = 0;
 		c.weightx = 1;
 		baseContainer.add(okButton, c);
+
+		JButton openButton = new JButton("loadData");
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				JFileChooser chooser = new JFileChooser("data_files");
+				chooser.setMultiSelectionEnabled(true);
+				int option = chooser.showOpenDialog(baseContainer);
+				if (option == JFileChooser.APPROVE_OPTION) {
+					File[] sf = chooser.getSelectedFiles();
+
+					for (int i = 0; i < sf.length; i++) {
+
+						String path = sf[i].getAbsolutePath();
+						// System.out.println(path);
+
+						if (path.contains(PUDMED)) {
+							DataLoading.loadDataFromPudmed(path);
+
+						} else if (path.contains(COCHRANE)) {
+
+							DataLoading.loadDataFromCochrane(path);
+						}
+					}
+				}
+			}
+		});
+
+		baseContainer.add(openButton, c);
 
 		baseContainer.setSize(1000, 500);
 		baseContainer.setVisible(true); //

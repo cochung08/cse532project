@@ -14,7 +14,6 @@ public class MainFunctionForJohn {
 
 		// Converter.convertPubmed();
 
-		String data_files = "data_files/formatted";
 		String databaseName = "MYDB";
 		String username = "db2admin"; // You put your username here
 		String password = "1"; // You put your password here
@@ -22,13 +21,13 @@ public class MainFunctionForJohn {
 		// password);
 		// ac.readFromTextFiles(data_files, 2);
 
-		String pathname1 = "data_files/Pubmed/pubmed.txt";
-		String pathname2 = "data_files/Cochrane/cochrane.txt";
+//		String pathname1 = "data_files/Pubmed/pubmed.txt";
+//		String pathname2 = "data_files/Cochrane/cochrane.txt";
 
-		DataLoading dataLoading = new DataLoading(databaseName, username,
-				password);
-//		dataLoading.loadDataFromPudmed(pathname1);
-//		dataLoading.loadDataFromCochrane(pathname2);
+		DatabaseConnection.connect(databaseName, username, password);
+		DataLoading.inital();
+//		DataLoading.loadDataFromPudmed(pathname1);
+//		DataLoading.loadDataFromCochrane(pathname2);
 
 		String searchTable = "article2";
 		String searchField = "ARTICLE_ID";

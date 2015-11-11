@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.Vector;
 
 public class DataLoading {
-	static Connection conn;
+
 	static String articleTable = "article2";
 	static String authorTable = "author";
 	static String keywordTable = "keyword";
@@ -14,34 +14,24 @@ public class DataLoading {
 	static PreparedStatement ps_keyword = null;
 	static PreparedStatement ps_article = null;
 
-	DataLoading(String databaseName, String user, String password) {
+	public static void inital() {
 
 		try {
-			String urlPrefix = "jdbc:db2://localhost:50000/";
-			String url = urlPrefix + databaseName;
-
-			// System.out.println("**** Enter class EzJava");
-			// String[] tmp = { "MYDB", "db2admin", "1" };
-
-			Class.forName("com.ibm.db2.jcc.DB2Driver");
-			System.out.println("**** Loaded the JDBC driver");
-			conn = DriverManager.getConnection(url, user, password);
-			conn.setAutoCommit(false);
 
 			String au_query = "INSERT INTO " + authorTable
 					+ " (AU_SHORT, AU_FULL, ARTICLE_ID) VALUES (?, ?, ?)";
-			ps_author = conn.prepareStatement(au_query);
+			ps_author = DatabaseConnection.conn.prepareStatement(au_query);
 
 			String kw_query = "INSERT INTO " + keywordTable
 					+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
-			ps_keyword = conn.prepareStatement(kw_query);
+			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
 
 			String insert_query = "INSERT INTO "
 					+ articleTable
 					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
 					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF) VALUES"
 					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			ps_article = conn.prepareStatement(insert_query,
+			ps_article = DatabaseConnection.conn.prepareStatement(insert_query,
 					new String[] { "article_id" });
 
 		} catch (Exception e) {
@@ -50,7 +40,7 @@ public class DataLoading {
 
 	}
 
-	public void loadDataFromPudmed(String pathname) {
+	public static void loadDataFromPudmed(String pathname) {
 
 		Vector<String> authorsVector = new Vector<String>();
 		Vector<String> keyWordsVector = new Vector<String>();
@@ -125,7 +115,7 @@ public class DataLoading {
 			}
 
 			ps_article.executeUpdate();
-			conn.commit();
+			DatabaseConnection.conn.commit();
 
 			ResultSet rsKey = ps_article.getGeneratedKeys();
 
@@ -138,7 +128,7 @@ public class DataLoading {
 					ps_keyword.setString(1, keyWordsVector.get(iKeyword));
 					ps_keyword.setInt(2, idColVar);
 					ps_keyword.executeUpdate();
-					conn.commit();
+					DatabaseConnection.conn.commit();
 				}
 
 				// Insert author (not implemented yet)
@@ -149,7 +139,7 @@ public class DataLoading {
 					ps_author.setString(2, authorsVector.get(iAu));
 					ps_author.setInt(3, idColVar);
 					ps_author.executeUpdate();
-					conn.commit();
+					DatabaseConnection.conn.commit();
 				}
 			}
 
@@ -168,7 +158,7 @@ public class DataLoading {
 		}
 	}
 
-	public void loadDataFromCochrane(String pathname) {
+	public static void loadDataFromCochrane(String pathname) {
 
 		String[] keyWords = null;
 		Vector<String> authorsVector = new Vector<String>();
@@ -234,8 +224,9 @@ public class DataLoading {
 					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
 					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF) VALUES"
 					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			PreparedStatement ps_article = conn.prepareStatement(
-					insertTableSQL, new String[] { "article_id" });
+			PreparedStatement ps_article = DatabaseConnection.conn
+					.prepareStatement(insertTableSQL,
+							new String[] { "article_id" });
 
 			for (int w = 1; w < size; w++) {
 
@@ -247,7 +238,7 @@ public class DataLoading {
 			}
 
 			ps_article.executeUpdate();
-			conn.commit();
+			DatabaseConnection.conn.commit();
 
 			ResultSet rsKey = ps_article.getGeneratedKeys();
 
@@ -255,7 +246,7 @@ public class DataLoading {
 			String keywordTable = "keyword";
 			String kw_query = "INSERT INTO " + keywordTable
 					+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
-			ps_keyword = conn.prepareStatement(kw_query);
+			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
 
 			while (rsKey.next()) {
 				int idColVar = rsKey.getInt(1);
@@ -266,7 +257,7 @@ public class DataLoading {
 					ps_keyword.setString(1, keyWords[iKeyword]);
 					ps_keyword.setInt(2, idColVar);
 					ps_keyword.executeUpdate();
-					conn.commit();
+					DatabaseConnection.conn.commit();
 				}
 
 				// Insert author (not implemented yet)
@@ -277,7 +268,7 @@ public class DataLoading {
 					ps_author.setString(2, authorsVector.get(iAu));
 					ps_author.setInt(3, idColVar);
 					ps_author.executeUpdate();
-					conn.commit();
+					DatabaseConnection.conn.commit();
 				}
 			}
 

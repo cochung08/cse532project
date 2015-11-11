@@ -4,11 +4,15 @@ import java.util.Vector;
 import com.ibm.db2.jcc.am.ResultSet;
 
 public class QueryFunctions {
-	static String tableName = "article2";
+
+
+	
 
 	public static void updateArticleTable(
 			LinkedHashMap<String, String> updateMap) {
 
+		 String tableName = "article2";
+		
 		try {
 
 			String tmp0 = "UPDATE " + tableName + " SET ";
@@ -28,7 +32,7 @@ public class QueryFunctions {
 
 			System.out.println(updated_Query);
 
-			PreparedStatement ps_update = DataLoading.conn
+			PreparedStatement ps_update = DatabaseConnection.conn
 					.prepareStatement(updated_Query);
 
 			int j = 1;
@@ -41,7 +45,7 @@ public class QueryFunctions {
 			}
 
 			ps_update.executeUpdate();
-			DataLoading.conn.commit();
+			DatabaseConnection.conn.commit();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
@@ -51,6 +55,7 @@ public class QueryFunctions {
 
 	public static LinkedHashMap<String, String> searchQuery(String searchTable,
 			String searchField, String searchValue) {
+		
 
 		try {
 
@@ -60,9 +65,9 @@ public class QueryFunctions {
 			String search_query = "SELECT * from " + searchTable + " where "
 					+ searchField + " = " + searchValue;
 
-			Statement st = DataLoading.conn.createStatement();
+			Statement st = DatabaseConnection.conn.createStatement();
 			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
-					+ tableName);
+					+ searchTable);
 			ResultSetMetaData md = rset.getMetaData();
 
 			Vector<String> fieldInArticleTable = new Vector<String>();
@@ -71,10 +76,10 @@ public class QueryFunctions {
 				fieldInArticleTable.add(md.getColumnLabel(i));
 			}
 
-			PreparedStatement ps_search = DataLoading.conn
+			PreparedStatement ps_search = DatabaseConnection.conn
 					.prepareStatement(search_query);
 			ResultSet rs = (ResultSet) ps_search.executeQuery();
-			DataLoading.conn.commit();
+			DatabaseConnection.conn.commit();
 
 			while (rs.next()) {
 
