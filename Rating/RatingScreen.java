@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -66,9 +67,7 @@ public class RatingScreen extends JFrame {
 	
 	private void loadData()
 	{
-		DatabaseManager.connectToDatabase();
-		String query = "SELECT abs, title, year";
-		DatabaseManager.query(query, new String[]{"abs", "title", "year"});
+		
 		
 		int nData = data.size();
 		vbar.setMaximum(nData - no_row + 1);
@@ -189,6 +188,47 @@ public class RatingScreen extends JFrame {
 			
 		}
 		
+	}
+	
+	private void getData()
+	{
+		try
+		{
+			// Doing query
+			DatabaseManager.connectToDatabase();
+			String query = "SELECT article_id, abs, title, year from article2 where rate1 is not null and or rate2 is not null";
+			ResultSet rs = DatabaseManager.query(query);
+			String[] cols = new String[] {"abs", "title", "year"};
+			while (rs.next())
+			{
+				ArticleInfo ar = new ArticleInfo();
+				
+				// Set article id
+				ar.setID(rs.getInt("article_id"));
+				
+				// Set rating information
+				String rate1 = rs.getString("rate1");
+				if (rs.wasNull())
+				{
+					ar.setRate1FromDB(null);
+				}
+				else
+				{
+					ar.setRate1FromDB(rate1);
+				}
+				ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
+				
+				for (int i = 0; i< cols.length; i++)
+				{
+					ar.addValue(cols[i], rs.getString(cols[i]));
+				}
+				
+				data.add(ar);
+			}
+		} catch (Exception ex)
+		{
+			System.out.println(ex.getMessage());
+		}
 	}
 	
 	public static void main(String[] agrs)

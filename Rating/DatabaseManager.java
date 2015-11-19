@@ -43,32 +43,20 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static ArrayList<ArticleInfo> query(String query, String[] queriedColumns)
+	public static ResultSet query(String query)
 	{
-		ArrayList<ArticleInfo> res = new ArrayList<ArticleInfo>();
+		ResultSet rs = null;
 		try
 		{
-			
-			
-			
 			PreparedStatement ps_search = conn.prepareStatement(query);
-			ResultSet rs = (ResultSet) ps_search.executeQuery();
-			conn.commit();
+			rs = (ResultSet) ps_search.executeQuery();
+			//conn.commit();
 	
-			while (rs.next())
-			{
-				ArticleInfo ar = new ArticleInfo();
-				for (int i = 0; i < queriedColumns.length; i++)
-				{
-					String val = rs.getString(queriedColumns[i]);
-					ar.addValue(queriedColumns[i], val);
-				}
-				res.add(ar);
-			}
+			
 		} catch(Exception ex)
 		{
 			System.out.println(ex.getMessage());
 		}
-		return res;
+		return rs;
 	}
 }
