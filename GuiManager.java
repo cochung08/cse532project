@@ -25,7 +25,11 @@ import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
 
 public class GuiManager {
 
@@ -42,23 +46,19 @@ public class GuiManager {
 			String year, String first, String second) {
 		final JFrame baseContainer = new JFrame();
 		baseContainer.setLayout(new GridLayout(6, 1, 5, 5));
+
 		// baseContainer.setLayout(new GridBagLayout());
 		// GridBagConstraints c = new GridBagConstraints();
+
+		Border softBevelBorder = new SoftBevelBorder(BevelBorder.RAISED,
+				Color.RED, Color.RED.darker(), Color.PINK,
+				Color.PINK.brighter());
 
 		JPanel JPanel1 = new JPanel();
 		JLabel Jtitle = new JLabel("title: " + title);
 		JPanel1.add(Jtitle);
-		//JPanel1.setBorder(new EmptyBorder(30, 60, 30, 60));
-		
 
-		JPanel JPanel2 = new JPanel();
 		JLabel JkeyWords = new JLabel("keywords: " + keywords);
-
-		// JPanel2.add(JkeyWords);
-
-		JScrollPane keywordsScrollPane = new JScrollPane(JkeyWords);
-		keywordsScrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		JPanel JPanel3 = new JPanel();
 		JLabel Jauthors = new JLabel("authors: " + authors);
@@ -81,7 +81,6 @@ public class GuiManager {
 		JPanel5.add(JFinalValue);
 
 		JTextArea textArea = new JTextArea(5, 20);
-
 		textArea.setText(abstract1);
 		textArea.setEditable(false);
 		// textArea.setEnabled(false);
@@ -89,15 +88,31 @@ public class GuiManager {
 
 		Font f = textArea.getFont();
 		Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 2);
+
+		Jtitle.setFont(f2);
 		textArea.setFont(f2);
 		JkeyWords.setFont(f2);
+		Jauthors.setFont(f2);
+		JJournal.setFont(f2);
+
+		JScrollPane keywordsScrollPane = new JScrollPane(JkeyWords);
+		keywordsScrollPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		JScrollPane abstractScrollPane = new JScrollPane(textArea);
 		textArea.setEditable(true);
 
 		abstractScrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		// scrollPane.setPreferredSize(new Dimension(250, 250));
+
+		Border bd1 = new EmptyBorder(10, 100, 10, 100);
+		Border bd2 = BorderFactory.createLineBorder(Color.black);
+		keywordsScrollPane.setBorder(new CompoundBorder(bd1, bd2));
+		abstractScrollPane.setBorder(new CompoundBorder(bd1, bd2));
+		JPanel1.setBorder(new CompoundBorder(bd1, bd2));
+		JPanel3.setBorder(new CompoundBorder(bd1, bd2));
+		JPanel4.setBorder(new CompoundBorder(bd1, bd2));
+		JPanel5.setBorder(new CompoundBorder(bd1, bd2));
 
 		baseContainer.add(JPanel1);
 		baseContainer.add(abstractScrollPane);
