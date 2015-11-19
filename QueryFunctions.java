@@ -1,18 +1,23 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.ibm.db2.jcc.am.ResultSet;
 
 public class QueryFunctions {
 
-
-	
-
 	public static void updateArticleTable(
 			LinkedHashMap<String, String> updateMap) {
 
-		 String tableName = "article2";
-		
+		String tableName = "article2";
+
 		try {
 
 			String tmp0 = "UPDATE " + tableName + " SET ";
@@ -53,9 +58,8 @@ public class QueryFunctions {
 
 	}
 
-	public static LinkedHashMap<String, String> searchQuery(String searchTable,
-			String searchField, String searchValue) {
-		
+	public static LinkedHashMap<String, String> searchArticle(
+			String searchTable, String searchField, String searchValue) {
 
 		try {
 
@@ -95,6 +99,59 @@ public class QueryFunctions {
 			rs.close();
 
 			return fieldValue;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public static ListMultimap<String, String> searchAuthorOrKeyword(String searchTable,
+			String searchField, String searchValue) {
+
+		try {
+
+			// Map<String, List<String>> map = new HashMap<String,
+			// List<String>>();
+
+			ListMultimap<String, String> multiMap = ArrayListMultimap.create();
+
+			String search_query = "SELECT * from " + searchTable + " where "
+					+ searchField + " = " + searchValue;
+
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
+					+ searchTable);
+			ResultSetMetaData md = rset.getMetaData();
+
+			Vector<String> fieldInArticleTable = new Vector<String>();
+			for (int i = 1; i <= md.getColumnCount(); i++) {
+
+				fieldInArticleTable.add(md.getColumnLabel(i));
+			}
+
+			PreparedStatement ps_search = DatabaseConnection.conn
+					.prepareStatement(search_query);
+			ResultSet rs = (ResultSet) ps_search.executeQuery();
+			DatabaseConnection.conn.commit();
+
+			while (rs.next()) {
+
+				for (int i = 0; i < fieldInArticleTable.size(); i++) {
+
+					String tmpKey = fieldInArticleTable.get(i);
+					String value = rs.getString(tmpKey);
+					multiMap.put(tmpKey, value);
+					// System.out.println(fieldInArticleTable.get(i) + ": " +
+					// tmp);
+				}
+
+			}
+			rs.close();
+
+			return multiMap;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
