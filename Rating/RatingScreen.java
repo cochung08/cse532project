@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -31,7 +32,7 @@ public class RatingScreen extends JFrame {
 	// Area for Rate value constants - End
 	
 	
-	private BriefArticleData data;
+	private ArrayList<ArticleInfo> data;
 	private int[] rateValues;
 	private int beginActiveRecords;
 	private int no_activeRecords;
@@ -41,8 +42,13 @@ public class RatingScreen extends JFrame {
 	private JTextField[] rateBoxes;
 	private JTextField[] titleBoxes;
 	
+	// Area of Event Handler - Begin
+	private RatingEntered ratingEnt;
+	// Area of Event Handler - End
+	
 	public RatingScreen()
 	{
+		ratingEnt = new RatingEntered();
 		initUI();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
@@ -50,6 +56,8 @@ public class RatingScreen extends JFrame {
 	private void loadData()
 	{
 		DatabaseManager.connectToDatabase();
+		String query = "SELECT abs, title, year";
+		DatabaseManager.query(query, new String[]{"abs", "title", "year"});
 	}
 	
 	private void closeSession()
@@ -80,12 +88,14 @@ public class RatingScreen extends JFrame {
 			rateBoxes[iRow] = new JTextField();
 			rateBoxes[iRow].setSize(new Dimension(rateWidth, rowHeight));
 			rateBoxes[iRow].setLocation(xRate, yRate);
+			rateBoxes[iRow].addKeyListener(ratingEnt);
 			
 			int yTitle = yRate;
 			int xTitle = rateBoxes[iRow].getX() + rateBoxes[iRow].getWidth() + columnGap;
 			titleBoxes[iRow] = new JTextField();
 			titleBoxes[iRow].setSize(new Dimension(titleWidth, rowHeight));
 			titleBoxes[iRow].setLocation(xTitle, yTitle);
+			titleBoxes[iRow].setEditable(false);
 			
 			this.getContentPane().add(rateBoxes[iRow]);
 			this.getContentPane().add(titleBoxes[iRow]);
@@ -93,6 +103,11 @@ public class RatingScreen extends JFrame {
 	}
 	
 	private void refreshUI()
+	{
+		
+	}
+	
+	private void moveCursorToNextRow()
 	{
 		
 	}
@@ -108,15 +123,15 @@ public class RatingScreen extends JFrame {
 			{
 				case 'S':
 				{
-					
+					moveCursorToNextRow();
 				} break;
 				case 'D':
 				{
-					
+					moveCursorToNextRow();
 				} break;
 				case 'Q':
 				{
-					
+					moveCursorToNextRow();
 				} break;
 				case 'A':
 				{
