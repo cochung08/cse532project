@@ -13,8 +13,8 @@ public class Article {
 	
 	//
 	private boolean isEmpty = true;
-	private static String psycInfoLabelMeaningFile = "E:\\Study\\PhD\\CSE532-Theory of Database Systems\\Project\\PsycInfoLabelMeaning.txt";
-	private static String psycInfoFieldDesFile = "E:\\Study\\PhD\\CSE532-Theory of Database Systems\\Project\\PsycInfoFieldDescription.txt";
+	private static String psycInfoLabelMeaningFile = "C:\\Users\\vunguyen\\Documents\\CSE532-Database\\PsycInfoLabelMeaning.txt";
+	private static String psycInfoFieldDesFile = "C:\\Users\\vunguyen\\Documents\\CSE532-Database\\PsycInfoFieldDescription.txt";
 	private static HashMap<String, String> labelMeaning;	// Key is label (in importing files, value is the corresponding field
 	private static HashMap<String, String> labelSplit;		// Key is label (in importing files, value is the string splitter
 	private static HashMap<String, String> fieldList;		// Key is field name, value is data type of the field

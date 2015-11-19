@@ -1,6 +1,7 @@
 package Rating;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,7 @@ import javax.swing.*;
 public class RatingScreen extends JFrame {
 	// Area for GUI parameters - Begin
 	private int viewBeginX = 20;
-	private int viewBeginY = 20;
+	private int viewBeginY = 100;
 	private int rowGap = 20;
 	private int columnGap = 30;
 	private int rowHeight = 40;
@@ -43,15 +44,29 @@ public class RatingScreen extends JFrame {
 	public RatingScreen()
 	{
 		initUI();
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	private void loadData()
 	{
-		
+		DatabaseManager.connectToDatabase();
+	}
+	
+	private void closeSession()
+	{
+		DatabaseManager.disconnectToDatabase();
 	}
 	
 	private void initUI()
 	{
+		// Load data
+		JButton btn_load = new JButton();
+		btn_load.setSize(new Dimension(90, 40));
+		btn_load.setLocation(new Point(20, 10));
+		btn_load.setText("Load Data");
+		this.getContentPane().add(btn_load);
+		
+		// Information boxes
 		this.setSize(frameWidth, frameHeight);
 		this.getContentPane().setLayout(null);
 		rateBoxes = new JTextField[no_row];

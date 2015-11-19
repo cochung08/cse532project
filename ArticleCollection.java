@@ -24,7 +24,7 @@ public class ArticleCollection {
 	private String url = "jdbc:db2://localhost:50000/hwone";		// Adjust your database's name here
 	private String user;								// Put your database's username here
 	private String password;					// Put your database's password here
-	private String articleTable = "article";
+	private String articleTable = "article2";
 	private String authorTable = "author";
 	private String keywordTable = "keyword";
 	private Connection conn = null;
