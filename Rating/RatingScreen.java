@@ -2,6 +2,8 @@ package Rating;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -37,6 +39,7 @@ public class RatingScreen extends JFrame {
 	private ArrayList<ArticleInfo> data;
 	private int[] rateValues;
 	private int displayIndex;
+	private int cursorIndex;
 	
 	private int no_row = 5;
 	
@@ -46,12 +49,15 @@ public class RatingScreen extends JFrame {
 	
 	// Area of Event Handler - Begin
 	private RatingEntered ratingEnt;
+	private TextFieldEntered tfenter;
 	private ScrollBarEvent scrollAdj;
 	// Area of Event Handler - End
 	
 	public RatingScreen()
 	{
+		data = new ArrayList<ArticleInfo>();
 		ratingEnt = new RatingEntered();
+		tfenter = new TextFieldEntered();
 		scrollAdj = new ScrollBarEvent();
 		initUI();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -63,15 +69,23 @@ public class RatingScreen extends JFrame {
 					e.getWindow().dispose();
 	            }
 			});
+		
+		loadData();
 	}
 	
 	private void loadData()
 	{
+		getData();
 		
-		
+		// Set values for scroll bar
 		int nData = data.size();
-		vbar.setMaximum(nData - no_row + 1);
-		vbar.setMinimum(1);
+		vbar.setMaximum(nData);
+		vbar.setMinimum(0);
+		vbar.getModel().setExtent(no_row);
+		
+		// Refresh user Interface
+		refreshUI();
+		
 	}
 	
 	private void closeSession()
@@ -103,6 +117,7 @@ public class RatingScreen extends JFrame {
 			rateBoxes[iRow].setSize(new Dimension(rateWidth, rowHeight));
 			rateBoxes[iRow].setLocation(xRate, yRate);
 			rateBoxes[iRow].addKeyListener(ratingEnt);
+			rateBoxes[iRow].addActionListener(tfenter);
 			
 			int yTitle = yRate;
 			int xTitle = rateBoxes[iRow].getX() + rateBoxes[iRow].getWidth() + columnGap;
@@ -116,15 +131,24 @@ public class RatingScreen extends JFrame {
 		}
 		
 		vbar = new JScrollBar(JScrollBar.VERTICAL);
-		
+		vbar.addAdjustmentListener(scrollAdj);
+		vbar.setSize(new Dimension(20, no_row*(rowHeight + rowGap)));
+		vbar.setLocation(viewBeginX + rateWidth + columnGap + titleWidth + 10, viewBeginY);
+		this.getContentPane().add(vbar);
 	}
 	
 	private void refreshUI()
 	{
 		int displayIndexEnd = Math.min(data.size() - 1, displayIndex + no_row - 1);
-		for (int i = displayIndex; i< displayIndexEnd; i++)
+		for (int i = displayIndex; i<= displayIndexEnd; i++)
 		{
 			int boxIndex = i - displayIndex;
+			
+			if (data.get(i).getActiveRate() != null)
+			{
+				rateBoxes[boxIndex].setText(data.get(i).getActiveRate());
+			}
+			
 			titleBoxes[boxIndex].setEditable(true);
 			titleBoxes[boxIndex].setText(data.get(i).getValue("title"));
 			titleBoxes[boxIndex].setEditable(false);
@@ -143,7 +167,39 @@ public class RatingScreen extends JFrame {
 		public void adjustmentValueChanged(AdjustmentEvent e) {
 			// TODO Auto-generated method stub
 			displayIndex = vbar.getValue();
+			System.out.println(displayIndex);
+			System.out.println(vbar.getModel().getExtent());
 			refreshUI();
+		}
+	}
+	
+	private class TextFieldEntered implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0) {
+			if (cursorIndex < no_row - 1)
+			{
+				cursorIndex++;
+			}
+			else	// This is the last row
+			{
+				// Check if this is the end of all records
+				if (vbar.getValue() + vbar.getModel().getExtent() == data.size())	// The end of all records
+				{
+					// Do nothing
+				}
+				else	// Load the next data page
+				{
+					for (int i = 0; i< no_row; i++)
+					{
+						rateBoxes[i].setText("");
+						titleBoxes[i].setText("");
+					}
+					int new_bar_value = Math.min(vbar.getValue() + no_row, data.size() - 1);
+					vbar.setValue(new_bar_value);
+					cursorIndex = 0;
+				}
+			}
+			rateBoxes[cursorIndex].requestFocus();
 		}
 		
 	}
@@ -159,15 +215,15 @@ public class RatingScreen extends JFrame {
 			{
 				case 'S':
 				{
-					moveCursorToNextRow();
+					
 				} break;
 				case 'D':
 				{
-					moveCursorToNextRow();
+					
 				} break;
 				case 'Q':
 				{
-					moveCursorToNextRow();
+					
 				} break;
 				case 'A':
 				{
@@ -196,7 +252,7 @@ public class RatingScreen extends JFrame {
 		{
 			// Doing query
 			DatabaseManager.connectToDatabase();
-			String query = "SELECT article_id, abs, title, year from article2 where rate1 is not null and or rate2 is not null";
+			String query = "SELECT article_id, abs, title, year, rate1, rate2 from article2 where rate2 is null";
 			ResultSet rs = DatabaseManager.query(query);
 			String[] cols = new String[] {"abs", "title", "year"};
 			while (rs.next())
@@ -206,22 +262,18 @@ public class RatingScreen extends JFrame {
 				// Set article id
 				ar.setID(rs.getInt("article_id"));
 				
-				// Set rating information
-				String rate1 = rs.getString("rate1");
-				if (rs.wasNull())
-				{
-					ar.setRate1FromDB(null);
-				}
-				else
-				{
-					ar.setRate1FromDB(rate1);
-				}
-				ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
-				
 				for (int i = 0; i< cols.length; i++)
 				{
-					ar.addValue(cols[i], rs.getString(cols[i]));
+					String temp = rs.getString(cols[i]);
+					ar.addValue(cols[i], temp);
 				}
+				
+				// Set rating information
+				String rate1 = rs.getString("rate1");
+				ar.setRate1FromDB(rate1);
+				ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
+				
+				
 				
 				data.add(ar);
 			}

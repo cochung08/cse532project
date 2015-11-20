@@ -3,10 +3,12 @@ package Rating;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.ibm.db2.jcc.am.ResultSet;
+//import com.ibm.db2.jcc.am.ResultSet;
 
 public class DatabaseManager {
 	static String username = "db2admin";		// You put your username here
@@ -48,8 +50,10 @@ public class DatabaseManager {
 		ResultSet rs = null;
 		try
 		{
-			PreparedStatement ps_search = conn.prepareStatement(query);
-			rs = (ResultSet) ps_search.executeQuery();
+			//PreparedStatement ps_search = conn.prepareStatement(query);
+			Statement stmt = conn.createStatement();
+			stmt.executeQuery(query);
+			rs = (ResultSet) stmt.executeQuery(query);
 			//conn.commit();
 	
 			

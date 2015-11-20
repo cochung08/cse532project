@@ -11,6 +11,10 @@ public class ArticleInfo {
 	
 	public ArticleInfo()
 	{
+		data = new HashMap<String, String>();
+		rate1 = null;
+		rate2 = null;
+		activeRate = null;
 	}
 	
 	public void addValue (String key, String value)
@@ -45,6 +49,7 @@ public class ArticleInfo {
 	
 	public void setRateFromUser(String _r)
 	{
+		activeRate = _r;
 		if (rate1 == null)
 		{
 			rate1 = _r;
@@ -63,5 +68,10 @@ public class ArticleInfo {
 	public String getRate2()
 	{
 		return rate2;
+	}
+	
+	public String getActiveRate()
+	{
+		return activeRate;
 	}
 }
