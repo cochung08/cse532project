@@ -28,59 +28,29 @@ public class MainFunctionForJohn {
 		// password);
 		// ac.readFromTextFiles(data_files, 2);
 
-		// String pathname1 = "data_files/Pubmed/pubmed.txt";
-		// String pathname2 = "data_files/Cochrane/cochrane.txt";
+		String pathname1 = "data_files/Pubmed/pubmed.txt";
+		String pathname2 = "data_files/Cochrane/cochrane.txt";
 
 		DatabaseConnection.connect(databaseName, username, password);
 		DataLoading.inital();
-		// DataLoading.loadDataFromPudmed(pathname1);
-		// DataLoading.loadDataFromCochrane(pathname2);
+//		DataLoading.loadDataFromPudmed(pathname1);
+//		DataLoading.loadDataFromCochrane(pathname2);
 
-		String searchTable3 = "KEYWORD";
-		String searchField3 = "ARTICLE_ID";
-		String searchValue3 = "108";
-
-		ListMultimap<String, String> keywordData = QueryFunctions
-				.searchAuthorOrKeyword(searchTable3, searchField3, searchValue3);
-
-		String searchTable = "ARTICLE2";
-		String searchField = "ARTICLE_ID";
-		String searchValue = "3";
-
-		LinkedHashMap<String, String> articleData = QueryFunctions
-				.searchArticle(searchTable, searchField, searchValue3);
-
-		String TITLE = articleData.get("TITLE");
-		String VOL = articleData.get("VOL");
-		String ISSUE = articleData.get("ISSUE");
-		String YEAR = articleData.get("YEAR");
-		String ABS = articleData.get("ABS");
-
-		List<String> tmp = keywordData.get("KEYWORD");
-		String KEYWORD = tmp.toString();
-	
-		
-		
-
-		String searchTable2 = "AUTHOR";
-		String searchField2 = "ARTICLE_ID";
-		String searchValue2 = "148";
-
-		ListMultimap<String, String> authorData = QueryFunctions
-				.searchAuthorOrKeyword(searchTable2, searchField2, searchValue3);
-		List<String> tmp2 = authorData.get("AU_FULL");
-
-		String AUTHOR = tmp2.toString();
-		
-
-//		for (String key : authorData.keySet()) {
-//			System.out.println(key + ": " + authorData.get(key));
-//
-//		}
+		String article_value = "1";
 
 		GuiManager guiManager = new GuiManager();
-		guiManager.showFinalRatingTable(TITLE, ABS, KEYWORD, AUTHOR, VOL,
-				ISSUE, YEAR, "0.5", "0.5");
+
+		int maxArticleId = QueryFunctions.getMaxArticleId();
+		System.out.println(maxArticleId);
+		for (int i = 1; i < maxArticleId; i++)
+			if (guiManager.showFinalRatingGui(String.valueOf(i))) {
+				break;
+			}
+
+		// for (String key : authorData.keySet()) {
+		// System.out.println(key + ": " + authorData.get(key));
+		//
+		// }
 
 		// guiManager.showAuthorTable(requestedData);
 
@@ -93,4 +63,5 @@ public class MainFunctionForJohn {
 
 		// ac.test1();
 	}
+
 }

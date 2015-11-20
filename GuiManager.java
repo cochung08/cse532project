@@ -11,8 +11,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,6 +34,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 
+import org.jdesktop.xswingx.PromptSupport;
+
+import com.google.common.collect.ListMultimap;
+
 public class GuiManager {
 
 	static final String PUDMED = "Pubmed";
@@ -41,9 +48,9 @@ public class GuiManager {
 
 	}
 
-	public void showFinalRatingTable(String title, String abstract1,
-			String keywords, String authors, String volumn, String pages,
-			String year, String first, String second) {
+	public void finalRatingGui(String article_id, String title,
+			String abstract1, String keywords, String authors, String volumn,
+			String pages, String year, String first, String second) {
 		final JFrame baseContainer = new JFrame();
 		baseContainer.setLayout(new GridLayout(6, 1, 5, 5));
 
@@ -69,13 +76,35 @@ public class GuiManager {
 				+ ",year: " + year);
 		JPanel4.add(JJournal);
 
-		JLabel JfirstValue = new JLabel("first value: " + first);
-		JLabel JSecondValue = new JLabel("second value: " + second);
-		JTextField JFinalValue = new JTextField("finalCode");
+		JLabel JfirstValue = new JLabel("first rate: " + first);
+		JLabel JSecondValue = new JLabel("second rate: " + second);
+		final JTextField JFinalValue = new JTextField();
+		PromptSupport.setPrompt("final rate", JFinalValue);
+
+		final int index = Integer.valueOf(article_id);
+
+		Action action = new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = JFinalValue.getText();
+				System.out.printf(text);
+				QueryFunctions.updateArticleFinalRate(index, text);
+				for (int i = index + 1; i < 200; i++)
+					if (showFinalRatingGui(String.valueOf(i))) {
+
+						baseContainer.setVisible(false);
+						baseContainer.dispose();
+						// System.out.println("exist");
+						break;
+					}
+
+			}
+		};
+
+		JFinalValue.addActionListener(action);
 
 		JPanel JPanel5 = new JPanel();
 		JPanel5.setLayout(new GridLayout(1, 3, 5, 5));
-		// JPanel3.setBorder(new EmptyBorder(30, 60, 30, 60));
 		JPanel5.add(JfirstValue);
 		JPanel5.add(JSecondValue);
 		JPanel5.add(JFinalValue);
@@ -121,54 +150,55 @@ public class GuiManager {
 		baseContainer.add(JPanel4);
 		baseContainer.add(JPanel5);
 
-		// c.fill = GridBagConstraints.HORIZONTAL;
-		// c.gridx = 0;
-		// c.weightx = 1;
-
-		// JPanel jPanel1 = new JPanel();
-		// jPanel1.setBorder(new EmptyBorder(30, 60, 30, 60));
-		// JTextField jTitle = new JTextField("ddd");
-		// jPanel1.add(jTitle);
-		//
-		// baseContainer.add(jPanel1, c);
-		//
-		// JPanel jPanel2 = new JPanel();
-		// jPanel2.setBorder(new EmptyBorder(30, 60, 30, 60));
-		// JTextField jAbstract = new JTextField("aaaaa");
-		// jPanel2.add(jAbstract);
-		//
-		// baseContainer.add(jPanel2, c);
-		//
-		// JPanel jPanel3 = new JPanel();
-		// jPanel3.setBorder(new EmptyBorder(30, 60, 30, 60));
-		// JLabel jKeywords = new JLabel("aaaaa");
-		// jPanel3.add(jKeywords);
-		//
-		// baseContainer.add(jPanel3, c);
-
-		// JTextArea textArea = new JTextArea(5, 20);
-		//
-		// textArea.setText("ssssss");
-		//
-		// textArea.setLineWrap(true);
-		//
-		// c.fill = GridBagConstraints.HORIZONTAL;
-		// c.gridx = 0;
-		// c.weightx = 1;
-		// baseContainer.add(textArea, c);
-
 		baseContainer.setSize(1000, 500);
 		baseContainer.setVisible(true); //
 
-		// JPanel idPanel = new JPanel();
-		// // idPanel.setLayout(new GridLayout(1, 5, 5, 0));
-		// idPanel.setBorder(new EmptyBorder(30, 60, 30, 60));
-		// idPanel.add(textArea);
+	}
 
-		// JPanel Row12Panel = new JPanel();
-		// Row12Panel.setLayout(new GridLayout(2, 1, 5, 5));
-		// Row12Panel.add(connectionButton);
-		// Row12Panel.add(idPanel);
+	public boolean showFinalRatingGui(String article_value) {
+		String searchTable3 = "KEYWORD";
+		String searchField3 = "ARTICLE_ID";
+
+		ListMultimap<String, String> keywordData = QueryFunctions
+				.searchAuthorOrKeyword(searchTable3, searchField3,
+						article_value);
+
+		String searchTable = "ARTICLE3";
+		String searchField = "ARTICLE_ID";
+
+		LinkedHashMap<String, String> articleData = QueryFunctions
+				.searchArticle(searchTable, searchField, article_value);
+
+		String ARTICLE_ID = articleData.get("ARTICLE_ID");
+		String TITLE = articleData.get("TITLE");
+		String VOL = articleData.get("VOL");
+		String ISSUE = articleData.get("ISSUE");
+		String YEAR = articleData.get("YEAR");
+		String ABS = articleData.get("ABS");
+		String RATE1 = articleData.get("RATE1");
+		String RATE2 = articleData.get("RATE2");
+		String RATEFINAL = articleData.get("FNLRATE");
+
+		List<String> tmp = keywordData.get("KEYWORD");
+		String KEYWORD = tmp.toString();
+
+		String searchTable2 = "AUTHOR";
+		String searchField2 = "ARTICLE_ID";
+
+		ListMultimap<String, String> authorData = QueryFunctions
+				.searchAuthorOrKeyword(searchTable2, searchField2,
+						article_value);
+
+		List<String> tmp2 = authorData.get("AU_FULL");
+
+		String AUTHOR = tmp2.toString();
+
+		if (ARTICLE_ID != null && RATEFINAL == null) {
+			finalRatingGui(article_value, TITLE, ABS, KEYWORD, AUTHOR, VOL,
+					ISSUE, YEAR, RATE1, RATE2);
+			return true;
+		} else
+			return false;
 	}
 
 	public void showAuthorTable(LinkedHashMap<String, String> requestedData) {
@@ -226,10 +256,6 @@ public class GuiManager {
 							.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 					scrollPane.setPreferredSize(new Dimension(250, 250));
 
-					// JTextField textField = new JTextField(10);
-					// // textField.setSize(500, 500); // set frame size
-					// // textField.setVisible(true);
-					// textField.setText(v1);
 					//
 					JFrame textFrame = new JFrame();
 					textFrame.setSize(500, 500);

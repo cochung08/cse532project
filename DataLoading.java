@@ -6,7 +6,7 @@ import java.util.Vector;
 
 public class DataLoading {
 
-	static String articleTable = "article2";
+	static String articleTable = "article3";
 	static String authorTable = "author";
 	static String keywordTable = "keyword";
 
@@ -29,8 +29,8 @@ public class DataLoading {
 			String insert_query = "INSERT INTO "
 					+ articleTable
 					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
-					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF) VALUES"
-					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF,RATE1,RATE_PER1,RATE2,RATE_PER2) VALUES"
+					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			ps_article = DatabaseConnection.conn.prepareStatement(insert_query,
 					new String[] { "article_id" });
 
@@ -47,7 +47,7 @@ public class DataLoading {
 
 		try {
 
-			int size = 24;
+			int size = 28;
 			String[] matchTable = new String[size];
 			String[] insertTable = new String[size];
 			for (int i = 0; i < size; i++) {
@@ -165,7 +165,7 @@ public class DataLoading {
 
 		try {
 
-			int size = 24;
+			int size = 28;
 			String[] matchTable = new String[size];
 			String[] insertTable = new String[size];
 			for (int i = 0; i < size; i++) {
@@ -222,8 +222,8 @@ public class DataLoading {
 			String insertTableSQL = "INSERT INTO "
 					+ articleTable
 					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
-					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF) VALUES"
-					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF,RATE1,RATE_PER1,RATE2,RATE_PER2) VALUES"
+					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps_article = DatabaseConnection.conn
 					.prepareStatement(insertTableSQL,
 							new String[] { "article_id" });
@@ -234,6 +234,7 @@ public class DataLoading {
 					ps_article.setNull(w, java.sql.Types.VARCHAR);
 				} else
 					ps_article.setString(w, insertTable[w]);
+				
 
 			}
 

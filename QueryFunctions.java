@@ -13,10 +13,63 @@ import com.ibm.db2.jcc.am.ResultSet;
 
 public class QueryFunctions {
 
+	public static int getMaxArticleId() {
+		int max_ = 0;
+		try {
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st
+					.executeQuery("SELECT MAX(ARTICLE_ID) AS max_ FROM article3");
+			while (rset.next()) {
+
+				max_ = rset.getInt("max_");
+
+			}
+			rset.close();
+
+			return max_;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+
+	}
+
+	public static void updateArticleFinalRate(int article_id, String finalRATE) {
+
+		String tableName = "article3";
+
+		try {
+
+			String tmp0 = "UPDATE " + tableName + " SET ";
+
+			String tmp1 = "FNLRATE" + " = ? ";
+
+			String tmp2 = "WHERE ARTICLE_ID = " + article_id;
+
+			String updated_Query = tmp0 + tmp1 + tmp2;
+
+			System.out.println(updated_Query);
+
+			PreparedStatement ps_update = DatabaseConnection.conn
+					.prepareStatement(updated_Query);
+
+			ps_update.setString(1, finalRATE);
+
+			ps_update.executeUpdate();
+			DatabaseConnection.conn.commit();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
 	public static void updateArticleTable(
 			LinkedHashMap<String, String> updateMap) {
 
-		String tableName = "article2";
+		String tableName = "article3";
 
 		try {
 
@@ -108,8 +161,8 @@ public class QueryFunctions {
 
 	}
 
-	public static ListMultimap<String, String> searchAuthorOrKeyword(String searchTable,
-			String searchField, String searchValue) {
+	public static ListMultimap<String, String> searchAuthorOrKeyword(
+			String searchTable, String searchField, String searchValue) {
 
 		try {
 
