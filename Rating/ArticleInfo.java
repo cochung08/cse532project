@@ -47,6 +47,11 @@ public class ArticleInfo {
 		rate[activeRate] = _r;
 	}
 	
+	public void setActiveRate(int _at)
+	{
+		activeRate = _at - 1;
+	}
+	
 	public String getRate()
 	{
 		return rate[activeRate];

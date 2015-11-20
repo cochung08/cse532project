@@ -300,9 +300,15 @@ public class RatingScreen extends JFrame {
 				String rate2 = rs.getString("rate2");
 				String rate_person1 = rs.getString("rate_person1");
 				String rate_person2 = rs.getString("rate_person2");
-				if (rate_person2 != null)
+				ar.setRateFromDB(rate1, 1);
+				ar.setRateFromDB(rate2, 2);
+				if (rate_person2 == null || !rate_person2.equals(username))
 				{
-					
+					ar.setActiveRate(1);
+				}
+				else
+				{
+					ar.setActiveRate(2);
 				}
 				
 				
