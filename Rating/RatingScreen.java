@@ -37,15 +37,17 @@ public class RatingScreen extends JFrame {
 	
 	
 	private ArrayList<ArticleInfo> data;
-	private int[] rateValues;
 	private int displayIndex;
 	private int cursorIndex;
 	
-	private int no_row = 5;
+	private int no_row = 9;
 	
+	// Area of GUI components - Begin
 	private JTextField[] rateBoxes;
 	private JTextField[] titleBoxes;
 	private JScrollBar vbar;
+	private JTextField userBox;
+	// Area of GUI components - End
 	
 	// Area of Event Handler - Begin
 	private RatingEntered ratingEnt;
@@ -70,7 +72,7 @@ public class RatingScreen extends JFrame {
 	            }
 			});
 		
-		loadData();
+		//loadData();
 	}
 	
 	private void loadData()
@@ -95,11 +97,27 @@ public class RatingScreen extends JFrame {
 	
 	private void initUI()
 	{
-		// Load data
+		// This frame
+		//this.pack();
+		this.setPreferredSize(new Dimension(1400, 1200));
+		this.pack();
+		
+		// Username text field
+		userBox = new JTextField();
+		userBox.setSize(new Dimension(80, 30));
+		userBox.setLocation(new Point(20, 10));
+		this.getContentPane().add(userBox);
+		
+		// Load data button
 		JButton btn_load = new JButton();
-		btn_load.setSize(new Dimension(90, 40));
-		btn_load.setLocation(new Point(20, 10));
+		btn_load.setSize(new Dimension(90, 30));
+		btn_load.setLocation(new Point(120, 10));
 		btn_load.setText("Load Data");
+		btn_load.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				loadData();
+			}
+		});
 		this.getContentPane().add(btn_load);
 		
 		// Information boxes
@@ -134,6 +152,8 @@ public class RatingScreen extends JFrame {
 		vbar.addAdjustmentListener(scrollAdj);
 		vbar.setSize(new Dimension(20, no_row*(rowHeight + rowGap)));
 		vbar.setLocation(viewBeginX + rateWidth + columnGap + titleWidth + 10, viewBeginY);
+		vbar.setMaximum(0);
+		vbar.setMinimum(0);
 		this.getContentPane().add(vbar);
 	}
 	
@@ -144,9 +164,9 @@ public class RatingScreen extends JFrame {
 		{
 			int boxIndex = i - displayIndex;
 			
-			if (data.get(i).getActiveRate() != null)
+			if (data.get(i).getRate() != null)
 			{
-				rateBoxes[boxIndex].setText(data.get(i).getActiveRate());
+				rateBoxes[boxIndex].setText(data.get(i).getRate());
 			}
 			
 			titleBoxes[boxIndex].setEditable(true);
@@ -155,10 +175,6 @@ public class RatingScreen extends JFrame {
 		}
 	}
 	
-	private void moveCursorToNextRow()
-	{
-		
-	}
 	
 	private class ScrollBarEvent implements AdjustmentListener
 	{
@@ -254,7 +270,16 @@ public class RatingScreen extends JFrame {
 		{
 			// Doing query
 			DatabaseManager.connectToDatabase();
-			String query = "SELECT article_id, abs, title, year, rate1, rate2 from article2 where rate2 is null";
+			String username = userBox.getText();
+			if (username.isEmpty())
+			{
+				JOptionPane.showMessageDialog(this, "Please enter username");
+				return;
+			}
+			String temp_usr = "'" + username +"'";
+			String query = "SELECT article_id, abs, title, year, rate1, rate_person1, rate2, rate_person2 from article2"
+					+ " where (rate2 is null) or "
+					+ "((rate_person1 = "+temp_usr+") and (rate1 = 'Q')) or ((rate_person2 = "+temp_usr+") and (rate2 = 'Q'))";
 			ResultSet rs = DatabaseManager.query(query);
 			String[] cols = new String[] {"abs", "title", "year"};
 			while (rs.next())
@@ -272,8 +297,17 @@ public class RatingScreen extends JFrame {
 				
 				// Set rating information
 				String rate1 = rs.getString("rate1");
-				ar.setRate1FromDB(rate1);
-				ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
+				String rate2 = rs.getString("rate2");
+				String rate_person1 = rs.getString("rate_person1");
+				String rate_person2 = rs.getString("rate_person2");
+				if (rate_person2 != null)
+				{
+					
+				}
+				
+				
+				//ar.setRate1FromDB(rate1);
+				//ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
 				
 				
 				

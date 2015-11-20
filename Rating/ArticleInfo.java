@@ -4,17 +4,17 @@ import java.util.HashMap;
 
 public class ArticleInfo {
 	HashMap<String, String> data;
-	String rate1;
-	String rate2;
-	String activeRate;
+	String[] rate;
+	int activeRate;
 	int id;
 	
 	public ArticleInfo()
 	{
 		data = new HashMap<String, String>();
-		rate1 = null;
-		rate2 = null;
-		activeRate = null;
+		rate = new String[2];
+		rate[0]	= null;
+		rate[1] = null;
+		activeRate = 0;
 	}
 	
 	public void addValue (String key, String value)
@@ -37,41 +37,18 @@ public class ArticleInfo {
 		return id;
 	}
 	
-	public void setRate1FromDB(String _r)
+	public void setRateFromDB(String _r, int person_id)
 	{
-		rate1 = _r;
-	}
-	
-	public void setRate2FromDB(String _r)
-	{
-		rate2 = _r;
+		rate[person_id - 1] = _r;
 	}
 	
 	public void setRateFromUser(String _r)
 	{
-		activeRate = _r;
-		if (rate1 == null)
-		{
-			rate1 = _r;
-		}
-		else
-		{
-			rate2 = _r;
-		}
+		rate[activeRate] = _r;
 	}
 	
-	public String getRate1()
+	public String getRate()
 	{
-		return rate1;
-	}
-	
-	public String getRate2()
-	{
-		return rate2;
-	}
-	
-	public String getActiveRate()
-	{
-		return activeRate;
+		return rate[activeRate];
 	}
 }
