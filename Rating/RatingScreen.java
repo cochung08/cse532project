@@ -176,6 +176,8 @@ public class RatingScreen extends JFrame {
 	private class TextFieldEntered implements ActionListener
 	{
 		public void actionPerformed(ActionEvent arg0) {
+			// Write value to 
+			
 			if (cursorIndex < no_row - 1)
 			{
 				cursorIndex++;
