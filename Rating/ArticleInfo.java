@@ -5,6 +5,7 @@ import java.util.HashMap;
 public class ArticleInfo {
 	HashMap<String, String> data;
 	String[] rate;
+	String[] rate_person;
 	int activeRate;
 	int id;
 	
@@ -40,6 +41,11 @@ public class ArticleInfo {
 	public void setRateFromDB(String _r, int person_id)
 	{
 		rate[person_id - 1] = _r;
+	}
+	
+	public void setRatePersonFromDB (String _str, int person_id)
+	{
+		rate[person_id - 1] = _str;
 	}
 	
 	public void setRateFromUser(String _r)
