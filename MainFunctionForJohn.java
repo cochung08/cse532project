@@ -33,33 +33,35 @@ public class MainFunctionForJohn {
 
 		DatabaseConnection.connect(databaseName, username, password);
 		DataLoading.inital();
-//		DataLoading.loadDataFromPudmed(pathname1);
-//		DataLoading.loadDataFromCochrane(pathname2);
+		// DataLoading.loadDataFromPudmed(pathname1);
+		// DataLoading.loadDataFromCochrane(pathname2);
 
 		String article_value = "1";
 
 		GuiManager guiManager = new GuiManager();
 
-		int maxArticleId = QueryFunctions.getMaxArticleId();
-		System.out.println(maxArticleId);
-		for (int i = 1; i < maxArticleId; i++)
-			if (guiManager.showFinalRatingGui(String.valueOf(i))) {
-				break;
-			}
+		guiManager.searchGUI();
+		
+		
+		
+
+//		 int maxArticleId = QueryFunctions.getMaxArticleId();
+//		 System.out.println(maxArticleId);
+//		 for (int i = 1; i <= maxArticleId; i++)
+//		 if (guiManager.showFinalRatingGui(String.valueOf(i))) {
+//		 break;
+//		 }
 
 		// for (String key : authorData.keySet()) {
 		// System.out.println(key + ": " + authorData.get(key));
 		//
 		// }
 
-		// guiManager.showAuthorTable(requestedData);
+//		 LinkedHashMap<String, String>
+//		 map=QueryFunctions.searchArticle("article3","article_id","2");
+//		 QueryFunctions.searchAll(map);
 
-		// for (String key : requestedData.keySet()) {
-		// System.out.println(key + ": " + requestedData.get(key));
-		//
-		// }
-
-		// System.out.println(fieldInArticleTable[i] + ": " + tmp);
+//		 guiManager.showAuthorTable(requestedData);
 
 		// ac.test1();
 	}

@@ -10,6 +10,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Vector;
@@ -45,6 +50,43 @@ public class GuiManager {
 
 	public void showMainPage() {
 		JFrame mainFrame = new JFrame();
+
+	}
+
+	public void showListGUI(ArrayList<dataCollection> dataCollectionArray) {
+
+		final JFrame baseContainer = new JFrame();
+
+		baseContainer.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		for (dataCollection data : dataCollectionArray) {
+			LinkedHashMap<String, String> articleMap = data.articleMap;
+			List<String> keywordMap = data.keywordMap;
+			List<String> authorMap = data.authorMap;
+
+			String strs = "";
+			for (String str : articleMap.keySet()) {
+				String value = articleMap.get(str);
+				if (str.equals("ABS") == false && value != null)
+					strs = strs + str + ": " + articleMap.get(str) + ", ";
+			}
+
+			String msg = strs + "//Author: " + authorMap.toString() + "//Keyword: "
+					+ keywordMap.toString();
+			System.out.println("msg: " + msg);
+			JTextField value = new JTextField(msg);
+			value.setBorder(BorderFactory.createLineBorder(Color.red));
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			baseContainer.add(value, c);
+
+		}
+
+		baseContainer.setSize(1000, 500);
+		baseContainer.setVisible(true); //
 
 	}
 
@@ -89,7 +131,8 @@ public class GuiManager {
 				String text = JFinalValue.getText();
 				System.out.printf(text);
 				QueryFunctions.updateArticleFinalRate(index, text);
-				for (int i = index + 1; i < 200; i++)
+				int maxArticleId = QueryFunctions.getMaxArticleId();
+				for (int i = index + 1; i < maxArticleId; i++)
 					if (showFinalRatingGui(String.valueOf(i))) {
 
 						baseContainer.setVisible(false);
@@ -169,6 +212,13 @@ public class GuiManager {
 		LinkedHashMap<String, String> articleData = QueryFunctions
 				.searchArticle(searchTable, searchField, article_value);
 
+		String searchTable2 = "AUTHOR";
+		String searchField2 = "ARTICLE_ID";
+
+		ListMultimap<String, String> authorData = QueryFunctions
+				.searchAuthorOrKeyword(searchTable2, searchField2,
+						article_value);
+
 		String ARTICLE_ID = articleData.get("ARTICLE_ID");
 		String TITLE = articleData.get("TITLE");
 		String VOL = articleData.get("VOL");
@@ -181,13 +231,6 @@ public class GuiManager {
 
 		List<String> tmp = keywordData.get("KEYWORD");
 		String KEYWORD = tmp.toString();
-
-		String searchTable2 = "AUTHOR";
-		String searchField2 = "ARTICLE_ID";
-
-		ListMultimap<String, String> authorData = QueryFunctions
-				.searchAuthorOrKeyword(searchTable2, searchField2,
-						article_value);
 
 		List<String> tmp2 = authorData.get("AU_FULL");
 
@@ -327,4 +370,140 @@ public class GuiManager {
 		baseContainer.setVisible(true); //
 
 	}
+
+	public void searchGUI() {
+
+		final JPanel basePanel = new JPanel();
+		JScrollPane keywordsScrollPane = new JScrollPane(basePanel);
+		keywordsScrollPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+		JFrame baseFrame = new JFrame();
+		baseFrame.add(keywordsScrollPane);
+
+		basePanel.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		Vector<String> keyVector = new Vector<String>();
+		Vector<JTextField> valueVector = new Vector<JTextField>();
+
+		try {
+			Statement st = DatabaseConnection.conn.createStatement();
+
+			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
+					+ "article3");
+			ResultSetMetaData md = rset.getMetaData();
+
+			Vector<String> fieldInArticleTable = new Vector<String>();
+			for (int i = 1; i <= md.getColumnCount(); i++) {
+
+				fieldInArticleTable.add(md.getColumnLabel(i));
+			}
+
+			for (final String key : fieldInArticleTable) {
+
+				keyVector.add(key);
+
+				JButton field = new JButton(key + ":	");
+
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 0;
+				c.weightx = 1;
+				basePanel.add(field, c);
+
+				JTextField value = new JTextField();
+				value.setBorder(BorderFactory.createLineBorder(Color.red));
+				valueVector.add(value);
+
+				c.fill = GridBagConstraints.HORIZONTAL;
+				c.gridx = 1;
+				c.weightx = 8;
+				basePanel.add(value, c);
+
+			}
+
+			keyVector.add("AU_FULL");
+
+			JButton authorField = new JButton("AU_FULL" + ":	");
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			basePanel.add(authorField, c);
+
+			JTextField authorValue = new JTextField();
+			authorValue.setBorder(BorderFactory.createLineBorder(Color.red));
+			valueVector.add(authorValue);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			basePanel.add(authorValue, c);
+
+			// ///keyword
+
+			keyVector.add("KEYWORD");
+
+			JButton keywordField = new JButton("KEYWORD" + ":	");
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			basePanel.add(keywordField, c);
+
+			JTextField keywordValue = new JTextField();
+			keywordValue.setBorder(BorderFactory.createLineBorder(Color.red));
+			valueVector.add(keywordValue);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			basePanel.add(keywordValue, c);
+
+			// ////////
+
+			JButton okButton = new JButton("search	");
+
+			final Vector<String> keyVectorCopy = (Vector<String>) keyVector
+					.clone();
+
+			final Vector<JTextField> valueVectorCopy = (Vector<JTextField>) valueVector
+					.clone();
+
+			okButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+
+					LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
+
+					for (int k = 0; k < keyVectorCopy.size(); k++) {
+						updateMap.put(keyVectorCopy.get(k), valueVectorCopy
+								.get(k).getText());
+
+					}
+					ArrayList<dataCollection> dataResultset = QueryFunctions
+							.searchJoinTable(updateMap);
+
+					System.out.println("searchAllTable.size()"
+							+ dataResultset.size());
+
+					showListGUI(dataResultset);
+
+				}
+			});
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			basePanel.add(okButton, c);
+
+			baseFrame.setSize(1000, 500);
+			baseFrame.setVisible(true); //
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 }

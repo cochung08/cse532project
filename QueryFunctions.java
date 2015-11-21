@@ -13,6 +13,19 @@ import com.ibm.db2.jcc.am.ResultSet;
 
 public class QueryFunctions {
 
+	public static boolean isWhitespace(String str) {
+		if (str == null) {
+			return false;
+		}
+		int sz = str.length();
+		for (int i = 0; i < sz; i++) {
+			if ((Character.isWhitespace(str.charAt(i)) == false)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static int getMaxArticleId() {
 		int max_ = 0;
 		try {
@@ -211,6 +224,96 @@ public class QueryFunctions {
 			e.printStackTrace();
 			return null;
 		}
+
+	}
+
+	public static ArrayList<dataCollection> searchJoinTable(
+			LinkedHashMap<String, String> Map) {
+
+		String tableName = "article3";
+
+		try {
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
+					+ tableName);
+			ResultSetMetaData md = rset.getMetaData();
+
+			Vector<String> fieldInArticleTable = new Vector<String>();
+			for (int i = 1; i <= md.getColumnCount(); i++) {
+
+				fieldInArticleTable.add(md.getColumnLabel(i));
+			}
+
+			String joinStr = "ARTICLE3 JOIN AUTHOR ON ARTICLE3.ARTICLE_ID= AUTHOR.ARTICLE_ID JOIN KEYWORD ON KEYWORD.ARTICLE_ID = AUTHOR.ARTICLE_ID";
+
+			String search_article_query = "SELECT * from " + joinStr
+					+ " where ";
+
+			String tmp2 = "";
+
+			for (String key : Map.keySet()) {
+				String value = Map.get(key);
+				// System.out.println(value);
+				if (isWhitespace(value) == false) {
+					tmp2 = tmp2 + key + " like '%" + value + "%' or ";
+				}
+			}
+			if (tmp2 != null)
+				tmp2 = tmp2.substring(0, tmp2.length() - 3);
+
+			search_article_query = search_article_query + tmp2;
+			System.out.println(search_article_query);
+
+			PreparedStatement search_article = DatabaseConnection.conn
+					.prepareStatement(search_article_query);
+
+			ResultSet rs = (ResultSet) search_article.executeQuery();
+			ArrayList<dataCollection> dataCollectionArray = new ArrayList<dataCollection>();
+
+			while (rs.next()) {
+
+				String article_id_key = "ARTICLE_ID";
+				String article_id_value = rs.getString("article_id");
+
+				String keywordTable = "KEYWORD";
+
+				ListMultimap<String, String> keywordData = QueryFunctions
+						.searchAuthorOrKeyword(keywordTable, article_id_key,
+								article_id_value);
+
+				LinkedHashMap<String, String> articleData = QueryFunctions
+						.searchArticle("article3", article_id_key,
+								article_id_value);
+
+				String authorTable = "AUTHOR";
+
+				ListMultimap<String, String> authorData = QueryFunctions
+						.searchAuthorOrKeyword(authorTable, article_id_key,
+								article_id_value);
+
+				List<String> tmp = keywordData.get("KEYWORD");
+				// System.out.println(tmp.toString());
+
+				List<String> tmp1 = authorData.get("AU_FULL");
+				// System.out.println(authorData.toString());
+
+				// System.out.println(articleData.toString());
+
+				dataCollection data = new dataCollection(articleData, tmp, tmp1);
+
+				dataCollectionArray.add(data);
+
+				return dataCollectionArray;
+
+			}
+			rs.close();
+
+			DatabaseConnection.conn.commit();
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		return null;
 
 	}
 }
