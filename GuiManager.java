@@ -38,6 +38,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.text.JTextComponent;
 
 import org.jdesktop.xswingx.PromptSupport;
 
@@ -81,17 +82,33 @@ public class GuiManager {
 			String msg = strs + "//Author: " + authorMap.toString()
 					+ "//Keyword: " + keywordMap.toString();
 			System.out.println("msg: " + msg);
-			JTextField value = new JTextField(msg);
-			Font f = value.getFont();
+			JTextField valueField = new JTextField(msg);
+			Font f = valueField.getFont();
 			Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 3);
-			value.setFont(f2);
+			valueField.setFont(f2);
 			Border bd1 = new EmptyBorder(10, 10, 10, 10);
-			value.setBorder(bd1);
+			valueField.setBorder(bd1);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 1;
 			c.weightx = 8;
-			baseContainer.add(value, c);
+			baseContainer.add(valueField, c);
+
+			final LinkedHashMap<String, String> articleDataCopy = (LinkedHashMap<String, String>) articleMap
+					.clone();
+			final List<String> keywordMapCopy = keywordMap;
+			final List<String> authorMapCopy = authorMap;
+
+			Action action = new AbstractAction() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					showAllTable(articleDataCopy, keywordMapCopy, authorMapCopy);
+
+				}
+			};
+
+			valueField.addActionListener(action);
 
 		}
 
@@ -252,6 +269,73 @@ public class GuiManager {
 			return true;
 		} else
 			return false;
+	}
+
+	public void showAllTable(LinkedHashMap<String, String> articleData,
+			List<String> keywordList, List<String> authorList) {
+
+		articleData.put("keyword", keywordList.toString());
+		articleData.put("author", authorList.toString());
+
+		final JFrame baseContainer = new JFrame();
+
+		baseContainer.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		Vector<String> keyVector = new Vector<String>();
+		Vector<JTextField> valueVector = new Vector<JTextField>();
+
+		for (final String key : articleData.keySet()) {
+
+			keyVector.add(key);
+
+			JButton field = new JButton(key + ":	");
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			baseContainer.add(field, c);
+
+			final String v1 = articleData.get(key);
+			JTextField value = new JTextField(v1);
+			value.setBorder(BorderFactory.createLineBorder(Color.red));
+			valueVector.add(value);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			baseContainer.add(value, c);
+
+			field.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+
+					JTextArea textArea = new JTextArea(5, 20);
+
+					textArea.setText(v1);
+
+					textArea.setLineWrap(true);
+
+					JScrollPane scrollPane = new JScrollPane(textArea);
+					textArea.setEditable(true);
+
+					scrollPane
+							.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+					scrollPane.setPreferredSize(new Dimension(250, 250));
+
+					//
+					JFrame textFrame = new JFrame();
+					textFrame.setSize(500, 500);
+					textFrame.add(scrollPane);
+					textFrame.setVisible(true);
+
+				}
+			});
+
+		}
+
+		baseContainer.setSize(1000, 500);
+		baseContainer.setVisible(true); //
+
 	}
 
 	public void showAuthorTable(LinkedHashMap<String, String> requestedData) {
