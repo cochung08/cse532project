@@ -17,8 +17,8 @@ public class QueryFunctions {
 		if (str == null) {
 			return false;
 		}
-		int sz = str.length();
-		for (int i = 0; i < sz; i++) {
+		
+		for (int i = 0; i < str.length(); i++) {
 			if ((Character.isWhitespace(str.charAt(i)) == false)) {
 				return false;
 			}
@@ -303,12 +303,12 @@ public class QueryFunctions {
 
 				dataCollectionArray.add(data);
 
-				return dataCollectionArray;
-
 			}
+
 			rs.close();
 
 			DatabaseConnection.conn.commit();
+			return dataCollectionArray;
 		} catch (SQLException e) {
 
 			e.printStackTrace();

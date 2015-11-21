@@ -55,7 +55,13 @@ public class GuiManager {
 
 	public void showListGUI(ArrayList<dataCollection> dataCollectionArray) {
 
-		final JFrame baseContainer = new JFrame();
+		final JPanel baseContainer = new JPanel();
+
+		JScrollPane JScrollPaneBase = new JScrollPane(baseContainer);
+		JScrollPaneBase
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JFrame jframe = new JFrame();
+		jframe.add(JScrollPaneBase);
 
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -72,11 +78,15 @@ public class GuiManager {
 					strs = strs + str + ": " + articleMap.get(str) + ", ";
 			}
 
-			String msg = strs + "//Author: " + authorMap.toString() + "//Keyword: "
-					+ keywordMap.toString();
+			String msg = strs + "//Author: " + authorMap.toString()
+					+ "//Keyword: " + keywordMap.toString();
 			System.out.println("msg: " + msg);
 			JTextField value = new JTextField(msg);
-			value.setBorder(BorderFactory.createLineBorder(Color.red));
+			Font f = value.getFont();
+			Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 3);
+			value.setFont(f2);
+			Border bd1 = new EmptyBorder(10, 10, 10, 10);
+			value.setBorder(bd1);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 1;
@@ -85,8 +95,8 @@ public class GuiManager {
 
 		}
 
-		baseContainer.setSize(1000, 500);
-		baseContainer.setVisible(true); //
+		jframe.setSize(1000, 500);
+		jframe.setVisible(true); //
 
 	}
 
@@ -472,22 +482,28 @@ public class GuiManager {
 
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-
-					LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
-
-					for (int k = 0; k < keyVectorCopy.size(); k++) {
-						updateMap.put(keyVectorCopy.get(k), valueVectorCopy
-								.get(k).getText());
-
+					String str = "";
+					for (int k = 0; k < valueVectorCopy.size(); k++) {
+						str = str + valueVectorCopy.get(k).getText();
 					}
-					ArrayList<dataCollection> dataResultset = QueryFunctions
-							.searchJoinTable(updateMap);
 
-					System.out.println("searchAllTable.size()"
-							+ dataResultset.size());
+					if (QueryFunctions.isWhitespace(str) == false) {
+						LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
 
-					showListGUI(dataResultset);
+						for (int k = 0; k < keyVectorCopy.size(); k++) {
+							updateMap.put(keyVectorCopy.get(k), valueVectorCopy
+									.get(k).getText());
 
+						}
+						ArrayList<dataCollection> dataResultset = QueryFunctions
+								.searchJoinTable(updateMap);
+
+						System.out.println("searchAllTable.size()"
+								+ dataResultset.size());
+
+						if (dataResultset != null)
+							showListGUI(dataResultset);
+					}
 				}
 			});
 
