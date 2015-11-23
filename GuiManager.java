@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -54,7 +55,7 @@ public class GuiManager {
 
 	}
 
-	public void showListGUI(ArrayList<dataCollection> dataCollectionArray) {
+	public static void showListGUI(ArrayList<dataCollection> dataCollectionArray) {
 
 		final JPanel baseContainer = new JPanel();
 
@@ -117,14 +118,32 @@ public class GuiManager {
 
 	}
 
-	public void finalRatingGui(String article_id, String title,
-			String abstract1, String keywords, String authors, String volumn,
-			String pages, String year, String first, String second) {
+	public static boolean finalRatingGui(String article_id) {
+
+		LinkedHashMap<String, String> finalRatingData = QueryFunctions
+				.getFinalRatingData(article_id);
+
+		if (finalRatingData == null)
+			return false;
+
+		String title = finalRatingData.get("TITLE");
+		String abstract1 = finalRatingData.get("ABS");
+		String keywords = finalRatingData.get("KEYWORD");
+		String authors = finalRatingData.get("AU_FULL");
+		String volumn = finalRatingData.get("VOL");
+		String pages = finalRatingData.get("ISSUE");
+		String year = finalRatingData.get("YEAR");
+		String first = finalRatingData.get("RATE1");
+		String second = finalRatingData.get("RATE2");
+		String finalRating = finalRatingData.get("FNLRATE");
+
+		if (finalRating != null)
+			return false;
+
 		final JFrame baseContainer = new JFrame();
 		baseContainer.setLayout(new GridLayout(6, 1, 5, 5));
 
-		// baseContainer.setLayout(new GridBagLayout());
-		// GridBagConstraints c = new GridBagConstraints();
+		baseContainer.setLayout(new GridBagLayout());
 
 		Border softBevelBorder = new SoftBevelBorder(BevelBorder.RAISED,
 				Color.RED, Color.RED.darker(), Color.PINK,
@@ -159,14 +178,15 @@ public class GuiManager {
 				System.out.printf(text);
 				QueryFunctions.updateArticleFinalRate(index, text);
 				int maxArticleId = QueryFunctions.getMaxArticleId();
-				for (int i = index + 1; i < maxArticleId; i++)
-					if (showFinalRatingGui(String.valueOf(i))) {
-
-						baseContainer.setVisible(false);
-						baseContainer.dispose();
-						// System.out.println("exist");
+				for (int i = index + 1; i <= maxArticleId; i++) {
+					boolean result = finalRatingGui(String.valueOf(i));
+					if (result == true) {
 						break;
 					}
+				}
+
+				baseContainer.setVisible(false);
+				baseContainer.dispose();
 
 			}
 		};
@@ -179,7 +199,7 @@ public class GuiManager {
 		JPanel5.add(JSecondValue);
 		JPanel5.add(JFinalValue);
 
-		JTextArea textArea = new JTextArea(5, 20);
+		JTextArea textArea = new JTextArea(20, 40);
 		textArea.setText(abstract1);
 		textArea.setEditable(false);
 		// textArea.setEnabled(false);
@@ -213,65 +233,110 @@ public class GuiManager {
 		JPanel4.setBorder(new CompoundBorder(bd1, bd2));
 		JPanel5.setBorder(new CompoundBorder(bd1, bd2));
 
-		baseContainer.add(JPanel1);
-		baseContainer.add(abstractScrollPane);
-		baseContainer.add(keywordsScrollPane);
-		baseContainer.add(JPanel3);
-		baseContainer.add(JPanel4);
-		baseContainer.add(JPanel5);
+		GridBagConstraints gbc = new GridBagConstraints();
 
-		baseContainer.setSize(1000, 500);
+		JButton jtitle = new JButton("title");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+
+		// baseContainer.add(jtitle, gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(JPanel1, gbc);
+
+		JLabel lblAddress = new JLabel("Address");
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 1;
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+		// baseContainer.add(lblAddress, gbc);
+
+		JTextArea txtAreaAddress = new JTextArea(10, 20);
+		JScrollPane pane = new JScrollPane(txtAreaAddress);
+		gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.NORTH;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(abstractScrollPane, gbc);
+
+		JButton jtitle2 = new JButton("title");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+
+		// baseContainer.add(jtitle2, gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 2;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(JPanel3, gbc);
+
+		JButton jtitle3 = new JButton("title");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+
+		// baseContainer.add(jtitle3, gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(JPanel4, gbc);
+
+		JButton jtitle4 = new JButton("title");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+
+		// baseContainer.add(jtitle4, gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 4;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(JPanel5, gbc);
+
+		baseContainer.setSize(1500, 700);
+		baseContainer.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		baseContainer.setVisible(true); //
+		return true;
 
 	}
 
-	public boolean showFinalRatingGui(String article_value) {
-		String searchTable3 = "KEYWORD";
-		String searchField3 = "ARTICLE_ID";
-
-		ListMultimap<String, String> keywordData = QueryFunctions
-				.searchAuthorOrKeyword(searchTable3, searchField3,
-						article_value);
-
-		String searchTable = "ARTICLE3";
-		String searchField = "ARTICLE_ID";
-
-		LinkedHashMap<String, String> articleData = QueryFunctions
-				.searchArticle(searchTable, searchField, article_value);
-
-		String searchTable2 = "AUTHOR";
-		String searchField2 = "ARTICLE_ID";
-
-		ListMultimap<String, String> authorData = QueryFunctions
-				.searchAuthorOrKeyword(searchTable2, searchField2,
-						article_value);
-
-		String ARTICLE_ID = articleData.get("ARTICLE_ID");
-		String TITLE = articleData.get("TITLE");
-		String VOL = articleData.get("VOL");
-		String ISSUE = articleData.get("ISSUE");
-		String YEAR = articleData.get("YEAR");
-		String ABS = articleData.get("ABS");
-		String RATE1 = articleData.get("RATE1");
-		String RATE2 = articleData.get("RATE2");
-		String RATEFINAL = articleData.get("FNLRATE");
-
-		List<String> tmp = keywordData.get("KEYWORD");
-		String KEYWORD = tmp.toString();
-
-		List<String> tmp2 = authorData.get("AU_FULL");
-
-		String AUTHOR = tmp2.toString();
-
-		if (ARTICLE_ID != null && RATEFINAL == null) {
-			finalRatingGui(article_value, TITLE, ABS, KEYWORD, AUTHOR, VOL,
-					ISSUE, YEAR, RATE1, RATE2);
-			return true;
-		} else
-			return false;
-	}
-
-	public void showAllTable(LinkedHashMap<String, String> articleData,
+	public static void showAllTable(LinkedHashMap<String, String> articleData,
 			List<String> keywordList, List<String> authorList) {
 
 		articleData.put("keyword", keywordList.toString());
@@ -338,7 +403,8 @@ public class GuiManager {
 
 	}
 
-	public void showAuthorTable(LinkedHashMap<String, String> requestedData) {
+	public static void showAuthorTable(
+			LinkedHashMap<String, String> requestedData) {
 
 		final JFrame baseContainer = new JFrame();
 
@@ -465,7 +531,7 @@ public class GuiManager {
 
 	}
 
-	public void searchGUI() {
+	public static void searchGUI() {
 
 		final JPanel basePanel = new JPanel();
 		JScrollPane keywordsScrollPane = new JScrollPane(basePanel);

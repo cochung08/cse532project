@@ -17,7 +17,7 @@ public class QueryFunctions {
 		if (str == null) {
 			return false;
 		}
-		
+
 		for (int i = 0; i < str.length(); i++) {
 			if ((Character.isWhitespace(str.charAt(i)) == false)) {
 				return false;
@@ -46,6 +46,61 @@ public class QueryFunctions {
 			e.printStackTrace();
 		}
 		return -1;
+
+	}
+
+	public static LinkedHashMap<String, String> getFinalRatingData(
+			String article_value) {
+		String searchTable = "ARTICLE3";
+		String searchField = "ARTICLE_ID";
+
+		LinkedHashMap<String, String> articleData = QueryFunctions
+				.searchArticle(searchTable, searchField, article_value);
+
+		if (articleData == null) {
+			return null;
+		}
+		String searchTable3 = "KEYWORD";
+		String searchField3 = "ARTICLE_ID";
+
+		ListMultimap<String, String> keywordData = QueryFunctions
+				.searchAuthorOrKeyword(searchTable3, searchField3,
+						article_value);
+
+		String searchTable2 = "AUTHOR";
+		String searchField2 = "ARTICLE_ID";
+
+		ListMultimap<String, String> authorData = QueryFunctions
+				.searchAuthorOrKeyword(searchTable2, searchField2,
+						article_value);
+
+		String ARTICLE_ID = articleData.get("ARTICLE_ID");
+		String TITLE = articleData.get("TITLE");
+		String VOL = articleData.get("VOL");
+		String ISSUE = articleData.get("ISSUE");
+		String YEAR = articleData.get("YEAR");
+		String ABS = articleData.get("ABS");
+		String RATE1 = articleData.get("RATE1");
+		String RATE2 = articleData.get("RATE2");
+		String RATEFINAL = articleData.get("FNLRATE");
+		String KEYWORD = keywordData.get("KEYWORD").toString();
+		String AUTHOR = authorData.get("AU_FULL").toString();
+
+		LinkedHashMap<String, String> finalRatingData = new LinkedHashMap<String, String>();
+
+		finalRatingData.put("ARTICLE_ID", ARTICLE_ID);
+		finalRatingData.put("TITLE", TITLE);
+		finalRatingData.put("VOL", VOL);
+		finalRatingData.put("ISSUE", ISSUE);
+		finalRatingData.put("YEAR", YEAR);
+		finalRatingData.put("ABS", ABS);
+		finalRatingData.put("RATE1", RATE1);
+		finalRatingData.put("RATE2", RATE2);
+		finalRatingData.put("FNLRATE", RATEFINAL);
+		finalRatingData.put("KEYWORD", KEYWORD);
+		finalRatingData.put("AU_FULL", AUTHOR);
+
+		return finalRatingData;
 
 	}
 
@@ -129,7 +184,7 @@ public class QueryFunctions {
 
 		try {
 
-			LinkedHashMap<String, String> fieldValue = new LinkedHashMap<String, String>();
+			LinkedHashMap<String, String> articleMap = new LinkedHashMap<String, String>();
 			;
 
 			String search_query = "SELECT * from " + searchTable + " where "
@@ -148,29 +203,45 @@ public class QueryFunctions {
 
 			PreparedStatement ps_search = DatabaseConnection.conn
 					.prepareStatement(search_query);
+
+			// ,
+			// ResultSet.TYPE_SCROLL_INSENSITIVE,
+			// ResultSet.CONCUR_READ_ONLY
+
 			ResultSet rs = (ResultSet) ps_search.executeQuery();
 			DatabaseConnection.conn.commit();
 
-			while (rs.next()) {
+			// if (!rs.isBeforeFirst()) {
+			// System.out.println("No data");
+			// return null;
+			// } else {
+			boolean ifEmpty = true;
 
+			while (rs.next()) {
+				ifEmpty = false;
 				for (int i = 0; i < fieldInArticleTable.size(); i++) {
 
 					String tmp = rs.getString(fieldInArticleTable.get(i));
-					fieldValue.put(fieldInArticleTable.get(i), tmp);
-					// System.out.println(fieldInArticleTable.get(i) + ": " +
-					// tmp);
+					articleMap.put(fieldInArticleTable.get(i), tmp);
+
 				}
 
 			}
+
 			rs.close();
 
-			return fieldValue;
+			if (ifEmpty == true)
+				return null;
+			else
+				return articleMap;
+			// }
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+
 		}
+		return null;
 
 	}
 
