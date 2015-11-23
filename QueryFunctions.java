@@ -326,7 +326,7 @@ public class QueryFunctions {
 				String value = Map.get(key);
 				// System.out.println(value);
 				if (isWhitespace(value) == false) {
-					tmp2 = tmp2 + key + " like '%" + value + "%' or ";
+					tmp2 = tmp2 + "LOWER("+key+")" + " like LOWER('%" + value + "%') or ";
 				}
 			}
 			if (tmp2 != null)

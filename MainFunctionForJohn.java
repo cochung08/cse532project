@@ -33,14 +33,14 @@ public class MainFunctionForJohn {
 
 		DatabaseConnection.connect(databaseName, username, password);
 		DataLoading.inital();
-		 DataLoading.loadDataFromPudmed(pathname1);
-		 DataLoading.loadDataFromCochrane(pathname2);
+//		 DataLoading.loadDataFromPudmed(pathname1);
+//		 DataLoading.loadDataFromCochrane(pathname2);
 
 		String article_value = "1";
 
 		GuiManager guiManager = new GuiManager();
 
-		// guiManager.searchGUI();
+		 guiManager.searchGUI();
 
 		int maxArticleId = QueryFunctions.getMaxArticleId();
 		for (int i = 1; i <= maxArticleId; i++) {
