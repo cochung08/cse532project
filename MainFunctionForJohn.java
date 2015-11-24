@@ -33,23 +33,23 @@ public class MainFunctionForJohn {
 
 		DatabaseConnection.connect(databaseName, username, password);
 		DataLoading.inital();
-//		 DataLoading.loadDataFromPudmed(pathname1);
+		// DataLoading.loadDataFromPudmed(pathname1);
 //		 DataLoading.loadDataFromCochrane(pathname2);
 
 		String article_value = "1";
 
 		GuiManager guiManager = new GuiManager();
 
-		 guiManager.searchGUI();
+		// guiManager.searchGUI();
 
-		int maxArticleId = QueryFunctions.getMaxArticleId();
-		for (int i = 1; i <= maxArticleId; i++) {
-			boolean result = GuiManager.finalRatingGui(String.valueOf(i));
-			if (result == true) {
-				System.out.println("result: " + i);
-				break;
-			}
-		}
+//		int maxArticleId = QueryFunctions.getMaxArticleId();
+//		for (int i = 1; i <= maxArticleId; i++) {
+//			boolean result = GuiManager.finalRatingGui(String.valueOf(i));
+//			if (result == true) {
+//				System.out.println("result: " + i);
+//				break;
+//			}
+//		}
 
 		// for (String key : authorData.keySet()) {
 		// System.out.println(key + ": " + authorData.get(key));
@@ -63,6 +63,9 @@ public class MainFunctionForJohn {
 		// guiManager.showAuthorTable(requestedData);
 
 		// ac.test1();
+		
+		
+		GuiManager.showMainPage();
 	}
 
 }

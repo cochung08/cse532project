@@ -50,8 +50,79 @@ public class GuiManager {
 	static final String PUDMED = "Pubmed";
 	static final String COCHRANE = "Cochrane";
 
-	public void showMainPage() {
+	public static void showMainPage() {
 		JFrame mainFrame = new JFrame();
+		final JPanel baseContainer = new JPanel();
+		baseContainer.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.weightx = 8;
+
+		JButton openButton = new JButton("loadData");
+		openButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				JFileChooser chooser = new JFileChooser("data_files");
+				chooser.setMultiSelectionEnabled(true);
+				int option = chooser.showOpenDialog(baseContainer);
+				if (option == JFileChooser.APPROVE_OPTION) {
+					File[] sf = chooser.getSelectedFiles();
+
+					for (int i = 0; i < sf.length; i++) {
+
+						String path = sf[i].getAbsolutePath();
+						// System.out.println(path);
+
+						if (path.contains(PUDMED)) {
+							DataLoading.loadDataFromPudmed(path);
+
+						} else if (path.contains(COCHRANE)) {
+
+							DataLoading.loadDataFromCochrane(path);
+						}
+					}
+				}
+			}
+		});
+
+		baseContainer.add(openButton, c);
+
+		JButton searchButton = new JButton("search");
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+
+				searchGUI();
+			}
+		});
+
+		baseContainer.add(searchButton, c);
+
+		JButton finalRatingButton = new JButton("finalRating");
+		
+		finalRatingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+
+				int maxArticleId = QueryFunctions.getMaxArticleId();
+				for (int i = 1; i <= maxArticleId; i++) {
+					boolean result = GuiManager.finalRatingGui(String
+							.valueOf(i));
+					if (result == true) {
+						System.out.println("result: " + i);
+						break;
+					}
+				}
+
+			}
+		});
+
+		baseContainer.add(finalRatingButton, c);
+		
+
+		mainFrame.add(baseContainer);
+		mainFrame.setSize(1000, 500);
+		mainFrame.setVisible(true);
+		
+		//
 
 	}
 
@@ -168,6 +239,8 @@ public class GuiManager {
 		JLabel JSecondValue = new JLabel("second rate: " + second);
 		final JTextField JFinalValue = new JTextField();
 		PromptSupport.setPrompt("final rate", JFinalValue);
+		JFinalValue.addAncestorListener( new RequestFocusListener() );
+		
 
 		final int index = Integer.valueOf(article_id);
 
