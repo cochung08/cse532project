@@ -63,4 +63,18 @@ public class DatabaseManager {
 		}
 		return rs;
 	}
+	
+	public static void update(String query)
+	{
+		try
+		{
+			//PreparedStatement ps_search = conn.prepareStatement(query);
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		} catch (Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			
+		}
+	}
 }

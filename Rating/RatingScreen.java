@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -47,6 +49,8 @@ public class RatingScreen extends JFrame {
 	private JTextField[] titleBoxes;
 	private JScrollBar vbar;
 	private JTextField userBox;
+	private JButton btn_load;
+	private JButton btn_save;
 	// Area of GUI components - End
 	
 	// Area of Event Handler - Begin
@@ -79,15 +83,44 @@ public class RatingScreen extends JFrame {
 	{
 		getData();
 		
-		// Set values for scroll bar
-		int nData = data.size();
-		vbar.setMaximum(nData);
-		vbar.setMinimum(0);
-		vbar.getModel().setExtent(no_row);
+		
 		
 		// Refresh user Interface
 		refreshUI();
 		
+	}
+	
+	private void saveData()
+	{
+		String rateperson = userBox.getText();
+		for (int i = 0; i< data.size(); i++)
+		{
+			ArticleInfo af = data.get(i);
+			if (af.isUpdated())
+			{
+				String perCol = "";
+				String rateCol = "";
+				if (af.getActiveRate() == 1)
+				{
+					perCol = "RATE_PERSON1";
+					rateCol = "RATE1";
+				}
+				else
+				{
+					perCol = "RATE_PERSON2";
+					rateCol = "RATE2";
+				}
+				
+				String sql = "UPDATE ARTICLE2 SET " +rateCol+ "='" +af.getRate() +
+						"',"+ perCol+ "='" + rateperson + "' WHERE ARTICLE_ID = " + Integer.toString(af.getID());
+				DatabaseManager.update(sql);
+				
+				data.remove(i);
+				i--;
+			}
+		}
+		
+		refreshUI();
 	}
 	
 	private void closeSession()
@@ -109,7 +142,7 @@ public class RatingScreen extends JFrame {
 		this.getContentPane().add(userBox);
 		
 		// Load data button
-		JButton btn_load = new JButton();
+		btn_load = new JButton();
 		btn_load.setSize(new Dimension(90, 30));
 		btn_load.setLocation(new Point(120, 10));
 		btn_load.setText("Load Data");
@@ -119,6 +152,22 @@ public class RatingScreen extends JFrame {
 			}
 		});
 		this.getContentPane().add(btn_load);
+		
+		// Save data button
+		btn_save = new JButton();
+		btn_save.setSize(new Dimension(btn_load.getWidth(), btn_load.getHeight()));
+		btn_save.setLocation(btn_load.getX() + btn_load.getWidth() + 20, btn_load.getY());
+		btn_save.setText("Save");
+		btn_save.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				saveData();
+				
+			}
+			
+		});
+		this.getContentPane().add(btn_save);
 		
 		// Information boxes
 		this.setSize(frameWidth, frameHeight);
@@ -136,6 +185,20 @@ public class RatingScreen extends JFrame {
 			rateBoxes[iRow].setLocation(xRate, yRate);
 			rateBoxes[iRow].addKeyListener(ratingEnt);
 			rateBoxes[iRow].addActionListener(tfenter);
+			rateBoxes[iRow].setName(Integer.toString(iRow));
+			rateBoxes[iRow].addFocusListener(new FocusListener(){
+				public void focusGained(FocusEvent arg0) {
+					// TODO Auto-generated method stub
+					JTextField source = (JTextField)(arg0.getSource());
+					cursorIndex = Integer.parseInt(source.getName());
+				}
+				
+				public void focusLost(FocusEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			});
 			
 			int yTitle = yRate;
 			int xTitle = rateBoxes[iRow].getX() + rateBoxes[iRow].getWidth() + columnGap;
@@ -159,19 +222,43 @@ public class RatingScreen extends JFrame {
 	
 	private void refreshUI()
 	{
+		// Set values for scroll bar
+		int nData = data.size();
+		vbar.setMaximum(nData);
+		vbar.setMinimum(0);
+		vbar.getModel().setExtent(no_row);
+				
 		int displayIndexEnd = Math.min(data.size() - 1, displayIndex + no_row - 1);
-		for (int i = displayIndex; i<= displayIndexEnd; i++)
+		for (int i = displayIndex; i<= displayIndex + no_row - 1; i++)
 		{
 			int boxIndex = i - displayIndex;
-			
-			if (data.get(i).getRate() != null)
+			if (i <= displayIndexEnd)
 			{
-				rateBoxes[boxIndex].setText(data.get(i).getRate());
+				
+				
+				if (data.get(i).getRate() != null)
+				{
+					rateBoxes[boxIndex].setText(data.get(i).getRate());
+				}
+				else
+				{
+					rateBoxes[boxIndex].setEditable(true);
+					rateBoxes[boxIndex].setText("");
+				}
+				
+				titleBoxes[boxIndex].setEditable(true);
+				titleBoxes[boxIndex].setText(data.get(i).getValue("title"));
+				titleBoxes[boxIndex].setEditable(false);
+			}
+			else
+			{
+				rateBoxes[boxIndex].setText("");
+				rateBoxes[boxIndex].setEditable(false);
+				titleBoxes[boxIndex].setEditable(true);
+				titleBoxes[boxIndex].setText("");
+				titleBoxes[boxIndex].setEditable(false);
 			}
 			
-			titleBoxes[boxIndex].setEditable(true);
-			titleBoxes[boxIndex].setText(data.get(i).getValue("title"));
-			titleBoxes[boxIndex].setEditable(false);
 		}
 	}
 	
@@ -183,8 +270,8 @@ public class RatingScreen extends JFrame {
 		public void adjustmentValueChanged(AdjustmentEvent e) {
 			// TODO Auto-generated method stub
 			displayIndex = vbar.getValue();
-			System.out.println(displayIndex);
-			System.out.println(vbar.getModel().getExtent());
+			//System.out.println(displayIndex);
+			//System.out.println(vbar.getModel().getExtent());
 			refreshUI();
 		}
 	}
@@ -226,28 +313,7 @@ public class RatingScreen extends JFrame {
 	{
 		@Override
 		public void keyPressed(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-			String strKey = Character.toString(arg0.getKeyChar()).toUpperCase();
-			char key = strKey.charAt(0);
-			switch (key)
-			{
-				case 'S':
-				{
-					
-				} break;
-				case 'D':
-				{
-					
-				} break;
-				case 'Q':
-				{
-					
-				} break;
-				case 'A':
-				{
-					
-				} break;
-			}
+			
 		}
 
 		@Override
@@ -259,7 +325,43 @@ public class RatingScreen extends JFrame {
 		@Override
 		public void keyTyped(KeyEvent arg0) {
 			// TODO Auto-generated method stub
-			
+			// TODO Auto-generated method stub
+			String strKey = Character.toString(arg0.getKeyChar()).toUpperCase();
+			char key = strKey.toUpperCase().charAt(0);
+			JTextField source = (JTextField)(arg0.getSource());
+			String finalKey = source.getText();
+			int ar_id = cursorIndex + displayIndex;
+			switch (key)
+			{
+				case 'S':
+				{
+					finalKey = "S";
+					data.get(ar_id).setRateFromUser("S");
+				} break;
+				case 'D':
+				{
+					finalKey = "D";
+					data.get(ar_id).setRateFromUser("D");
+				} break;
+				case 'Q':
+				{
+					finalKey = "Q";
+					data.get(ar_id).setRateFromUser("Q");
+				} break;
+				case 'A':
+				{
+					DetailInfoPanel dlg = new DetailInfoPanel(RatingScreen.this, 
+							source.getLocation());
+							//SwingUtilities.convertPoint(source, new Point(source.getX(), source.getY()), RatingScreen.this));
+					ArticleInfo ar = data.get(displayIndex + cursorIndex);
+					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), "", "");
+					dlg.setVisible(true);
+					
+				} break;
+			}
+			source.setText(finalKey);
+			arg0.consume();
+			return;
 		}
 		
 	}
@@ -279,7 +381,10 @@ public class RatingScreen extends JFrame {
 			String temp_usr = "'" + username +"'";
 			String query = "SELECT article_id, abs, title, year, rate1, rate_person1, rate2, rate_person2 from article2"
 					+ " where (rate2 is null) or "
+					+ "(rate1 is null) or"
 					+ "((rate_person1 = "+temp_usr+") and (rate1 = 'Q')) or ((rate_person2 = "+temp_usr+") and (rate2 = 'Q'))";
+			
+			
 			ResultSet rs = DatabaseManager.query(query);
 			String[] cols = new String[] {"abs", "title", "year"};
 			while (rs.next())
@@ -302,17 +407,52 @@ public class RatingScreen extends JFrame {
 				String rate_person2 = rs.getString("rate_person2");
 				//ar.setRateFromDB(rate1, 1);
 				//ar.setRateFromDB(rate2, 2);
-				if (rate_person2 == null || !rate_person2.equals(username))
+				
+				
+				
+				boolean added = false;
+				if (rate_person1 != null && rate_person1.equals(username))
 				{
-					ar.setRatePersonFromDB(rate_person1, 1);
-					ar.setRateFromDB(rate1, 1);
-					ar.setActiveRate(1);
+					if (rate1.equals("Q"))
+					{
+						ar.setRatePersonFromDB(rate_person1, 1);
+						ar.setRateFromDB(rate1, 1);
+						ar.setActiveRate(1);
+						added = true;
+					}
 				}
 				else
 				{
-					ar.setRatePersonFromDB(rate_person2, 2);
-					ar.setRateFromDB(rate2, 2);
-					ar.setActiveRate(2);
+					if (rate_person2 != null && rate_person2.equals(username))
+					{
+						if (rate2.equals("Q"))
+						{
+							ar.setRatePersonFromDB(rate_person2, 2);
+							ar.setRateFromDB(rate2, 2);
+							ar.setActiveRate(2);
+							added = true;
+						}
+					}
+					else
+					{
+						if (rate_person1 == null)
+						{
+							ar.setRatePersonFromDB(rate_person1, 1);
+							ar.setRateFromDB(rate1, 1);
+							ar.setActiveRate(1);
+							added = true;
+						}
+						else
+						{
+							if (rate_person2 == null)
+							{
+								ar.setRatePersonFromDB(rate_person2, 2);
+								ar.setRateFromDB(rate2, 2);
+								ar.setActiveRate(2);
+								added = true;
+							}
+						}
+					}
 				}
 				
 				
@@ -320,8 +460,10 @@ public class RatingScreen extends JFrame {
 				//ar.setRate2FromDB(null);			// Obviously, the 2nd rate should be null
 				
 				
-				
-				data.add(ar);
+				if (added == true)
+				{
+					data.add(ar);
+				}
 			}
 		} catch (Exception ex)
 		{
