@@ -77,4 +77,15 @@ public class DatabaseManager {
 			
 		}
 	}
+	
+	public static void deleteRecord(int articleID)
+	{
+		// Delete in Keyword table
+		
+		// Delete in Author table
+		
+		// Delete in Article table
+		
+		
+	}
 }
