@@ -209,6 +209,7 @@ public class QueryFunctions {
 			// ResultSet.CONCUR_READ_ONLY
 
 			ResultSet rs = (ResultSet) ps_search.executeQuery();
+
 			DatabaseConnection.conn.commit();
 
 			// if (!rs.isBeforeFirst()) {
@@ -229,6 +230,9 @@ public class QueryFunctions {
 			}
 
 			rs.close();
+			ps_search.close();
+			DatabaseConnection.conn.close();
+			DatabaseConnection.connect();
 
 			if (ifEmpty == true)
 				return null;
@@ -237,6 +241,10 @@ public class QueryFunctions {
 			// }
 
 		} catch (SQLException e) {
+
+			if (e.getSQLState().equals("51002")) {
+
+			}
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 
@@ -287,14 +295,23 @@ public class QueryFunctions {
 
 			}
 			rs.close();
+			ps_search.close();
+			DatabaseConnection.conn.close();
+			DatabaseConnection.connect();
 
 			return multiMap;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			if (e.getSQLState().equals("51002")) {
+				System.out.println("ssssssssssss");
+
+			}
+
 			e.printStackTrace();
-			return null;
+
 		}
+		return null;
 
 	}
 
@@ -302,6 +319,7 @@ public class QueryFunctions {
 			LinkedHashMap<String, String> Map) {
 
 		String tableName = "article3";
+		ArrayList<String> matchedArtcileIdList = new ArrayList<String>();
 
 		try {
 			Statement st = DatabaseConnection.conn.createStatement();
@@ -326,7 +344,8 @@ public class QueryFunctions {
 				String value = Map.get(key);
 				// System.out.println(value);
 				if (isWhitespace(value) == false) {
-					tmp2 = tmp2 + "LOWER("+key+")" + " like LOWER('%" + value + "%') or ";
+					tmp2 = tmp2 + "LOWER(" + key + ")" + " like LOWER('%"
+							+ value + "%') or ";
 				}
 			}
 			if (tmp2 != null)
@@ -339,52 +358,122 @@ public class QueryFunctions {
 					.prepareStatement(search_article_query);
 
 			ResultSet rs = (ResultSet) search_article.executeQuery();
-			ArrayList<dataCollection> dataCollectionArray = new ArrayList<dataCollection>();
 
 			while (rs.next()) {
 
 				String article_id_key = "ARTICLE_ID";
-				String article_id_value = rs.getString("article_id");
-
-				String keywordTable = "KEYWORD";
-
-				ListMultimap<String, String> keywordData = QueryFunctions
-						.searchAuthorOrKeyword(keywordTable, article_id_key,
-								article_id_value);
-
-				LinkedHashMap<String, String> articleData = QueryFunctions
-						.searchArticle("article3", article_id_key,
-								article_id_value);
-
-				String authorTable = "AUTHOR";
-
-				ListMultimap<String, String> authorData = QueryFunctions
-						.searchAuthorOrKeyword(authorTable, article_id_key,
-								article_id_value);
-
-				List<String> tmp = keywordData.get("KEYWORD");
-				// System.out.println(tmp.toString());
-
-				List<String> tmp1 = authorData.get("AU_FULL");
-				// System.out.println(authorData.toString());
-
-				// System.out.println(articleData.toString());
-
-				dataCollection data = new dataCollection(articleData, tmp, tmp1);
-
-				dataCollectionArray.add(data);
-
+				String article_id_value = rs.getString(article_id_key);
+				if (matchedArtcileIdList.contains(article_id_value) == false)
+					matchedArtcileIdList.add(article_id_value);
 			}
 
 			rs.close();
 
-			DatabaseConnection.conn.commit();
-			return dataCollectionArray;
 		} catch (SQLException e) {
+
+			if (e.getSQLState().equals("51002")) {
+
+			}
 
 			e.printStackTrace();
 		}
-		return null;
+
+		// for (int i = 0; i < matchedArtcileIdList.size(); i++)
+		System.out.println("size:" + matchedArtcileIdList.size());
+
+		return getResultById(matchedArtcileIdList);
 
 	}
+
+	static ArrayList<dataCollection> getResultById(ArrayList<String> idList) {
+
+		String article_id_key = "ARTICLE_ID";
+
+		String keywordTable = "KEYWORD";
+
+		ArrayList<dataCollection> dataCollectionArray = new ArrayList<dataCollection>();
+
+		for (String article_id_value : idList) {
+
+			ListMultimap<String, String> keywordData = QueryFunctions
+					.searchAuthorOrKeyword(keywordTable, article_id_key,
+							article_id_value);
+
+			LinkedHashMap<String, String> articleData = QueryFunctions
+					.searchArticle("article3", article_id_key, article_id_value);
+
+			String authorTable = "AUTHOR";
+
+			ListMultimap<String, String> authorData = QueryFunctions
+					.searchAuthorOrKeyword(authorTable, article_id_key,
+							article_id_value);
+
+			List<String> tmp = keywordData.get("KEYWORD");
+			// System.out.println(tmp.toString());
+
+			List<String> tmp1 = authorData.get("AU_FULL");
+			// System.out.println(authorData.toString());
+
+			// System.out.println(articleData.toString());
+
+			dataCollection data = new dataCollection(articleData, tmp, tmp1);
+
+			dataCollectionArray.add(data);
+		}
+
+		return dataCollectionArray;
+	}
+
+	static boolean ifDuplicate(String title, String year, String issue,
+			String author) {
+
+		LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
+		updateMap.put("TITLE", title);
+		ArrayList<dataCollection> dataResultset = searchJoinTable(updateMap);
+
+		LinkedHashMap<String, String> updateMap2 = new LinkedHashMap<String, String>();
+
+		// updateMap.put("TITLE", title);
+		updateMap2.put("YEAR", year);
+		updateMap2.put("ISSUE", issue);
+		updateMap2.put("AU_FULL", author);
+
+		ArrayList<dataCollection> dataResultset2 = searchJoinTable(updateMap2);
+
+		if (dataResultset.size() > 0) {
+			System.out.println(1);
+			return true;
+		} else {
+			if (dataResultset2.size() > 0) {
+				System.out.println(2);
+				return true;
+			} else
+				return false;
+
+			// for (int j = 0; j < dataResultset.size(); j++) {
+			// String title_ = dataResultset.get(j).articleMap.get("TITLE");
+			//
+			// System.out.println(title_);
+			// // String issue_ = dataResultset.get(j).articleMap.get("ISSUE");
+			// // String year_ = dataResultset.get(j).articleMap.get("YEAR");
+			// // String author = dataResultset.get(j).articleMap.get("YEAR");
+			//
+			// // int counter = 0;
+			// //
+			// // if (title.equals(title_))
+			// // counter++;
+			// //
+			// // if (issue.equals(issue_))
+			// // counter++;
+			// //
+			// // if (year.equals(year_))
+			// // counter++;
+			// //
+			// // if (counter >= 2)
+			// // return true;
+			// }
+		}
+
+	}
+
 }

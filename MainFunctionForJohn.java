@@ -31,10 +31,12 @@ public class MainFunctionForJohn {
 		String pathname1 = "data_files/Pubmed/pubmed.txt";
 		String pathname2 = "data_files/Cochrane/cochrane.txt";
 
-		DatabaseConnection.connect(databaseName, username, password);
-		DataLoading.inital();
+		DatabaseConnection.connect();
+
+//		QueryFunctions.ifDuplicate("?", "?", "?");
+
 		// DataLoading.loadDataFromPudmed(pathname1);
-//		 DataLoading.loadDataFromCochrane(pathname2);
+		// DataLoading.loadDataFromCochrane(pathname2);
 
 		String article_value = "1";
 
@@ -42,14 +44,14 @@ public class MainFunctionForJohn {
 
 		// guiManager.searchGUI();
 
-//		int maxArticleId = QueryFunctions.getMaxArticleId();
-//		for (int i = 1; i <= maxArticleId; i++) {
-//			boolean result = GuiManager.finalRatingGui(String.valueOf(i));
-//			if (result == true) {
-//				System.out.println("result: " + i);
-//				break;
-//			}
-//		}
+		// int maxArticleId = QueryFunctions.getMaxArticleId();
+		// for (int i = 1; i <= maxArticleId; i++) {
+		// boolean result = GuiManager.finalRatingGui(String.valueOf(i));
+		// if (result == true) {
+		// System.out.println("result: " + i);
+		// break;
+		// }
+		// }
 
 		// for (String key : authorData.keySet()) {
 		// System.out.println(key + ": " + authorData.get(key));
@@ -63,8 +65,7 @@ public class MainFunctionForJohn {
 		// guiManager.showAuthorTable(requestedData);
 
 		// ac.test1();
-		
-		
+
 		GuiManager.showMainPage();
 	}
 

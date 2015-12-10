@@ -98,7 +98,7 @@ public class GuiManager {
 		baseContainer.add(searchButton, c);
 
 		JButton finalRatingButton = new JButton("finalRating");
-		
+
 		finalRatingButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 
@@ -116,12 +116,11 @@ public class GuiManager {
 		});
 
 		baseContainer.add(finalRatingButton, c);
-		
 
 		mainFrame.add(baseContainer);
 		mainFrame.setSize(1000, 500);
 		mainFrame.setVisible(true);
-		
+
 		//
 
 	}
@@ -175,6 +174,7 @@ public class GuiManager {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
+					System.out.println("locate");
 					showAllTable(articleDataCopy, keywordMapCopy, authorMapCopy);
 
 				}
@@ -239,8 +239,7 @@ public class GuiManager {
 		JLabel JSecondValue = new JLabel("second rate: " + second);
 		final JTextField JFinalValue = new JTextField();
 		PromptSupport.setPrompt("final rate", JFinalValue);
-		JFinalValue.addAncestorListener( new RequestFocusListener() );
-		
+		JFinalValue.addAncestorListener(new RequestFocusListener());
 
 		final int index = Integer.valueOf(article_id);
 
@@ -415,10 +414,20 @@ public class GuiManager {
 		articleData.put("keyword", keywordList.toString());
 		articleData.put("author", authorList.toString());
 
-		final JFrame baseContainer = new JFrame();
+		final JPanel basePanel = new JPanel();
+		JScrollPane keywordsScrollPane = new JScrollPane(basePanel);
+		keywordsScrollPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		baseContainer.setLayout(new GridBagLayout());
+		JFrame baseFrame = new JFrame();
+		baseFrame.add(keywordsScrollPane);
+
+		basePanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
+
+		// final JFrame baseContainer = new JFrame();
+		// baseContainer.setLayout(new GridBagLayout());
+		// GridBagConstraints c = new GridBagConstraints();
 
 		Vector<String> keyVector = new Vector<String>();
 		Vector<JTextField> valueVector = new Vector<JTextField>();
@@ -432,17 +441,17 @@ public class GuiManager {
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 0;
 			c.weightx = 1;
-			baseContainer.add(field, c);
+			basePanel.add(field, c);
 
 			final String v1 = articleData.get(key);
 			JTextField value = new JTextField(v1);
-			value.setBorder(BorderFactory.createLineBorder(Color.red));
+			value.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(value);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
 			c.gridx = 1;
 			c.weightx = 8;
-			baseContainer.add(value, c);
+			basePanel.add(value, c);
 
 			field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -471,8 +480,41 @@ public class GuiManager {
 
 		}
 
-		baseContainer.setSize(1000, 500);
-		baseContainer.setVisible(true); //
+		JButton updateButton = new JButton("update	");
+
+		final Vector<String> keyVectorCopy = (Vector<String>) keyVector.clone();
+
+		final Vector<JTextField> valueVectorCopy = (Vector<JTextField>) valueVector
+				.clone();
+
+		updateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				System.out.println("update");
+
+				LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
+				int size_ = keyVectorCopy.size();
+
+				for (int i = 0; i < size_ - 2; i++) {
+					System.out.println(keyVectorCopy.get(i) + "_"
+							+ valueVectorCopy.get(i).getText());
+
+					updateMap.put(keyVectorCopy.get(i), valueVectorCopy.get(i)
+							.getText());
+				}
+
+				QueryFunctions.updateArticleTable(updateMap);
+
+			}
+		});
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.weightx = 1;
+		basePanel.add(updateButton, c);
+
+		baseFrame.setSize(1000, 500);
+		baseFrame.setVisible(true); //
 
 	}
 
@@ -508,7 +550,7 @@ public class GuiManager {
 
 			final String v1 = requestedData.get(key);
 			JTextField value = new JTextField(v1);
-			value.setBorder(BorderFactory.createLineBorder(Color.red));
+			value.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			valueVector.add(value);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -645,7 +687,7 @@ public class GuiManager {
 				basePanel.add(field, c);
 
 				JTextField value = new JTextField();
-				value.setBorder(BorderFactory.createLineBorder(Color.red));
+				value.setBorder(BorderFactory.createLineBorder(Color.black));
 				valueVector.add(value);
 
 				c.fill = GridBagConstraints.HORIZONTAL;
@@ -665,7 +707,7 @@ public class GuiManager {
 			basePanel.add(authorField, c);
 
 			JTextField authorValue = new JTextField();
-			authorValue.setBorder(BorderFactory.createLineBorder(Color.red));
+			authorValue.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(authorValue);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -685,7 +727,7 @@ public class GuiManager {
 			basePanel.add(keywordField, c);
 
 			JTextField keywordValue = new JTextField();
-			keywordValue.setBorder(BorderFactory.createLineBorder(Color.red));
+			keywordValue.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(keywordValue);
 
 			c.fill = GridBagConstraints.HORIZONTAL;

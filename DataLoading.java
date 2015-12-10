@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 public class DataLoading {
@@ -65,6 +67,11 @@ public class DataLoading {
 			matchTable[14] = "LID";
 			matchTable[12] = "AB";
 
+			String title = null;
+			String year = null;
+			String issue = null;
+			String author = null;
+
 			try {
 
 				File file = new File(pathname);
@@ -81,14 +88,28 @@ public class DataLoading {
 								.replaceAll("\\s+", "");
 						String value = line.substring(5).substring(1);
 
+						if (key.equals("IP")) {
+							issue = value;
+						}
+
+						if (key.equals("TI")) {
+							title = value;
+						}
+
+						if (key.equals("DA")) {
+							year = value;
+						}
+
 						// System.out.println(key);
 						// System.out.println(value);
 
 						if (key.equals("MH"))
 							keyWordsVector.add(value);
 
-						if (key.equals("FAU"))
+						if (key.equals("FAU")) {
 							authorsVector.add(value);
+							author = value;
+						}
 
 						for (int i = 0; i < size; i++) {
 							if (matchTable[i] != null)
@@ -103,6 +124,19 @@ public class DataLoading {
 
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+
+			System.out.println("title:" + title);
+			System.out.println("year:" + year);
+			System.out.println("issue:" + issue);
+
+			boolean ifDup = QueryFunctions.ifDuplicate(title, year, issue,
+					author);
+			if (ifDup == true) {
+				System.out.println("duplicate,dont add");
+				return;
+			} else {
+				System.out.println("no duplicate,add");
 			}
 
 			for (int w = 1; w < size; w++) {
@@ -163,6 +197,12 @@ public class DataLoading {
 		String[] keyWords = null;
 		Vector<String> authorsVector = new Vector<String>();
 
+		String title = null;
+		String year = null;
+		String issue = null;
+		String vol = null;
+		String author = null;
+
 		try {
 
 			int size = 28;
@@ -198,11 +238,25 @@ public class DataLoading {
 						String key = tmpStr[0];
 						String value = tmpStr[1].substring(1);
 
+						if (key.equals("TI"))
+							title = value;
+
+						if (key.equals("YR"))
+							year = value;
+
+						if (key.equals("VL"))
+							vol = value;
+
+						if (key.equals("NO"))
+							issue = value;
+
 						if (key.equals("KY"))
 							keyWords = value.split(";");
 
-						if (key.equals("AU"))
+						if (key.equals("AU")) {
 							authorsVector.add(value);
+							author = value;
+						}
 
 						for (int i = 0; i < size; i++) {
 							if (matchTable[i] != null)
@@ -217,6 +271,15 @@ public class DataLoading {
 
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+
+			boolean ifDup = QueryFunctions.ifDuplicate(title, year, issue,
+					author);
+			if (ifDup == true) {
+				System.out.println("duplicate,dont add");
+				return;
+			} else {
+				System.out.println("no duplicate,add");
 			}
 
 			String insertTableSQL = "INSERT INTO "
@@ -234,7 +297,6 @@ public class DataLoading {
 					ps_article.setNull(w, java.sql.Types.VARCHAR);
 				} else
 					ps_article.setString(w, insertTable[w]);
-				
 
 			}
 
@@ -288,4 +350,5 @@ public class DataLoading {
 			}
 		}
 	}
+
 }
