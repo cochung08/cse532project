@@ -81,11 +81,25 @@ public class DatabaseManager {
 	public static void deleteRecord(int articleID)
 	{
 		// Delete in Keyword table
+		String kw_sql = "DELETE FROM KEYWORD WHERE ARTICLE_ID = "+articleID;
 		
 		// Delete in Author table
+		String au_sql = "DELETE FROM AUTHOR WHERE ARTICLE_ID = "+articleID;
 		
 		// Delete in Article table
+		String ar_sql = "DELETE FROM ARTICLE2 WHERE ARTICLE_ID = "+articleID;
 		
-		
+		try
+		{
+			//PreparedStatement ps_search = conn.prepareStatement(query);
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(kw_sql);
+			stmt.executeUpdate(au_sql);
+			stmt.executeUpdate(ar_sql);
+		} catch (Exception ex)
+		{
+			System.out.println(ex.getMessage());
+			
+		}
 	}
 }

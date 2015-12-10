@@ -83,8 +83,6 @@ public class RatingScreen extends JFrame {
 	{
 		getData();
 		
-		
-		
 		// Refresh user Interface
 		refreshUI();
 		
