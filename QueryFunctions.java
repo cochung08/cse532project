@@ -1,3 +1,8 @@
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -476,4 +482,48 @@ public class QueryFunctions {
 
 	}
 
+	static void exportById(ArrayList<String> idList) {
+
+		ArrayList<dataCollection> dataCollectionArray = QueryFunctions
+				.getResultById(idList);
+
+		for (dataCollection data : dataCollectionArray) {
+
+			List<String> lines = new ArrayList<String>();
+
+			LinkedHashMap<String, String> articleMap = data.articleMap;
+			List<String> keywordMap = data.keywordMap;
+			List<String> authorMap = data.authorMap;
+
+			articleMap.put("KEY", keywordMap.toString());
+			articleMap.put("AUTHOR", authorMap.toString());
+
+			String id = articleMap.get("ARTICLE_ID");
+
+			String strs = "";
+			for (String key : articleMap.keySet()) {
+				String value = articleMap.get(key);
+				key = Strings.padEnd(key, 15, ' ');
+
+				System.out.println("size:" + key.length());
+				System.out.println(key);
+
+				String tmp = key + "- " + value;
+				lines.add(tmp);
+
+				try {
+
+					Path file = Paths.get("data_files\\ExportFiles\\" + id
+							+ ".txt");
+					Files.write(file, lines, Charset.forName("UTF-8"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+
+	}
 }

@@ -33,7 +33,7 @@ public class MainFunctionForJohn {
 
 		DatabaseConnection.connect();
 
-//		QueryFunctions.ifDuplicate("?", "?", "?");
+		// QueryFunctions.ifDuplicate("?", "?", "?");
 
 		// DataLoading.loadDataFromPudmed(pathname1);
 		// DataLoading.loadDataFromCochrane(pathname2);

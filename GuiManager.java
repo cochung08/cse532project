@@ -11,11 +11,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Vector;
@@ -43,6 +49,7 @@ import javax.swing.text.JTextComponent;
 
 import org.jdesktop.xswingx.PromptSupport;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ListMultimap;
 
 public class GuiManager {
@@ -125,7 +132,8 @@ public class GuiManager {
 
 	}
 
-	public static void showListGUI(ArrayList<dataCollection> dataCollectionArray) {
+	public static void showsSearchListGUI(
+			ArrayList<dataCollection> dataCollectionArray) {
 
 		final JPanel baseContainer = new JPanel();
 
@@ -137,6 +145,33 @@ public class GuiManager {
 
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
+
+		/////////////
+		final ArrayList<String> idList = new ArrayList<String>();
+
+		for (dataCollection dataitem : dataCollectionArray) {
+			String id = dataitem.articleMap.get("ARTICLE_ID");
+			idList.add(id);
+		}
+
+		JButton exportButton = new JButton("export	");
+
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				System.out.println("export111");
+
+				QueryFunctions.exportById(idList);
+
+			}
+
+		});
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.weightx = 1;
+		baseContainer.add(exportButton, c);
+		// ///////////
 
 		for (dataCollection data : dataCollectionArray) {
 			LinkedHashMap<String, String> articleMap = data.articleMap;
@@ -480,12 +515,11 @@ public class GuiManager {
 
 		}
 
-		JButton updateButton = new JButton("update	");
-
 		final Vector<String> keyVectorCopy = (Vector<String>) keyVector.clone();
-
 		final Vector<JTextField> valueVectorCopy = (Vector<JTextField>) valueVector
 				.clone();
+
+		JButton updateButton = new JButton("update	");
 
 		updateButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -512,6 +546,31 @@ public class GuiManager {
 		c.gridx = 0;
 		c.weightx = 1;
 		basePanel.add(updateButton, c);
+
+		// //////////////////
+		JButton exportButton = new JButton("export	");
+
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				System.out.println("export");
+
+				String article_id = valueVectorCopy.get(0).getText();
+
+				ArrayList<String> idList = new ArrayList<String>();
+				idList.add(article_id);
+
+				QueryFunctions.exportById(idList);
+
+			}
+		});
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.weightx = 1;
+		basePanel.add(exportButton, c);
+
+		// exportById
 
 		baseFrame.setSize(1000, 500);
 		baseFrame.setVisible(true); //
@@ -767,7 +826,7 @@ public class GuiManager {
 								+ dataResultset.size());
 
 						if (dataResultset != null)
-							showListGUI(dataResultset);
+							showsSearchListGUI(dataResultset);
 					}
 				}
 			});
