@@ -114,7 +114,7 @@ public class RatingScreen extends JFrame {
 		});
 		// Login
 		String s = (String)JOptionPane.showInputDialog(null, "Input your username", JOptionPane.OK_CANCEL_OPTION);
-		if (s == null)
+		if (s == null || s.isEmpty())
 		{
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		}
@@ -399,16 +399,19 @@ public class RatingScreen extends JFrame {
 				{
 					finalKey = "S";
 					data.get(ar_id).setRateFromUser("S");
+					tfenter.actionPerformed(null);
 				} break;
 				case 'D':
 				{
 					finalKey = "D";
 					data.get(ar_id).setRateFromUser("D");
+					tfenter.actionPerformed(null);
 				} break;
 				case 'Q':
 				{
 					finalKey = "Q";
 					data.get(ar_id).setRateFromUser("Q");
+					tfenter.actionPerformed(null);
 				} break;
 				case 'A':
 				{
