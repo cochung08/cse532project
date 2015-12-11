@@ -2,10 +2,13 @@ package Rating;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -16,6 +19,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class RatingScreen extends JFrame {
 	// Area for GUI parameters - Begin
@@ -26,8 +31,8 @@ public class RatingScreen extends JFrame {
 	private int rowHeight = 40;
 	private int rateWidth = 60;
 	private int titleWidth = 300;
-	private int frameWidth = 800;
-	private int frameHeight = 600;
+	private int frameWidth = 1200;
+	private int frameHeight = 500;
 	// Area for GUI parameters - End
 	
 	// Area for Rate value constants - Begin
@@ -61,6 +66,11 @@ public class RatingScreen extends JFrame {
 	
 	public RatingScreen()
 	{
+		// This is used to receive resize event only when it is finished (do not need to update continuously)
+		Toolkit.getDefaultToolkit().setDynamicLayout(false);
+		this.setSize(frameWidth, frameHeight);
+		this.getContentPane().setLayout(null);
+
 		data = new ArrayList<ArticleInfo>();
 		ratingEnt = new RatingEntered();
 		tfenter = new TextFieldEntered();
@@ -75,6 +85,42 @@ public class RatingScreen extends JFrame {
 					e.getWindow().dispose();
 	            }
 			});
+		this.addComponentListener(new ComponentListener(){
+
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				initUI();
+				refreshUI();
+			}
+
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		// Login
+		String s = (String)JOptionPane.showInputDialog(null, "Input your username", JOptionPane.OK_CANCEL_OPTION);
+		if (s == null)
+		{
+			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		}
+		userBox.setText(s);
+		userBox.setEditable(false);
+		loadData();
 		
 		//loadData();
 	}
@@ -128,10 +174,10 @@ public class RatingScreen extends JFrame {
 	
 	private void initUI()
 	{
-		// This frame
-		//this.pack();
-		this.setPreferredSize(new Dimension(1400, 1200));
-		this.pack();
+		// Remove all old components.
+		this.getContentPane().removeAll();
+		
+		
 		
 		// Username text field
 		userBox = new JTextField();
@@ -149,7 +195,7 @@ public class RatingScreen extends JFrame {
 				loadData();
 			}
 		});
-		this.getContentPane().add(btn_load);
+		//this.getContentPane().add(btn_load);
 		
 		// Save data button
 		btn_save = new JButton();
@@ -168,11 +214,10 @@ public class RatingScreen extends JFrame {
 		this.getContentPane().add(btn_save);
 		
 		// Information boxes
-		this.setSize(frameWidth, frameHeight);
-		this.getContentPane().setLayout(null);
+		no_row = (this.getHeight() - (viewBeginY + 50))/(rowHeight + rowGap);
 		rateBoxes = new JTextField[no_row];
 		titleBoxes = new JTextField[no_row];
-		
+		titleWidth = (int) (this.getWidth() - (viewBeginX + rateWidth + columnGap + 70));
 		for (int iRow = 0; iRow< no_row; iRow++)
 		{
 			// Create one row
@@ -216,6 +261,16 @@ public class RatingScreen extends JFrame {
 		vbar.setMaximum(0);
 		vbar.setMinimum(0);
 		this.getContentPane().add(vbar);
+
+		vbar.getModel().addChangeListener(new ChangeListener(){
+
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				BoundedRangeModel src = (BoundedRangeModel)arg0.getSource();
+				displayIndex = src.getValue();
+			}
+			
+		});
 	}
 	
 	private void refreshUI()
@@ -267,7 +322,16 @@ public class RatingScreen extends JFrame {
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent e) {
 			// TODO Auto-generated method stub
-			displayIndex = vbar.getValue();
+			if (displayIndex + no_row > data.size())
+			{
+				displayIndex = data.size() - no_row;
+			}
+			if (displayIndex < 0)
+			{
+				displayIndex = 0;
+			}
+			vbar.setValue(displayIndex);
+			//displayIndex = vbar.getValue();
 			//System.out.println(displayIndex);
 			//System.out.println(vbar.getModel().getExtent());
 			refreshUI();
@@ -348,8 +412,10 @@ public class RatingScreen extends JFrame {
 				} break;
 				case 'A':
 				{
+					int dlgX = (int) (source.getLocation().getX()+RatingScreen.this.getLocationOnScreen().getX() + rateWidth + 20);
+					int dlgY = (int) (source.getLocation().getY()+RatingScreen.this.getLocationOnScreen().getY() + 50);
 					DetailInfoPanel dlg = new DetailInfoPanel(RatingScreen.this, 
-							source.getLocation());
+							new Point(dlgX, dlgY));
 							//SwingUtilities.convertPoint(source, new Point(source.getX(), source.getY()), RatingScreen.this));
 					ArticleInfo ar = data.get(displayIndex + cursorIndex);
 					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), "", "");

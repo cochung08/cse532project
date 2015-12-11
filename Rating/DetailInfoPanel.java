@@ -1,5 +1,6 @@
 package Rating;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
@@ -7,6 +8,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,9 +45,11 @@ public class DetailInfoPanel extends JDialog
 	{
 		this.setLayout(null);
 		this.parent = _parent;
+		this.getContentPane().setBackground(new Color(190, 190, 190));
 		initUI();
 		this.setLocationRelativeTo(parent);
 		this.setLocation(_pos);
+		
 	}
 	
 	public void setContent(String _abstract, String _title, String _author, String _journal)
@@ -82,6 +86,7 @@ public class DetailInfoPanel extends JDialog
 		txt_abs.setWrapStyleWord(true);
 		txt_abs.setSize(new Dimension(text_width, ta_height));
 		txt_abs.setLocation(new Point(viewBeginX2, viewBeginY));
+		txt_abs.setWrapStyleWord(true);
 		this.getContentPane().add(txt_abs);
 		
 		txt_title = new JTextField();
