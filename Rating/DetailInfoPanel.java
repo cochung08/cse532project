@@ -32,8 +32,12 @@ public class DetailInfoPanel extends JDialog
 	private int tf_height = 50;
 	private int label_height = tf_height;
 	private int row_gap = 20;
-	//private int 
 	// Area for GUI parameters - End
+	
+	public static final int S_CHOSEN = 0;
+	public static final int Q_CHOSEN = 1;
+	public static final int D_CHOSEN = 2;
+	private int decision = -1;
 	
 	JTextArea txt_abs;
 	JTextArea txt_title;
@@ -153,18 +157,21 @@ public class DetailInfoPanel extends JDialog
 		txt_title.setSize(new Dimension(text_width, tf_height));
 		txt_title.setLocation(new Point(viewBeginX2, scr_abs.getY() + scr_abs.getHeight() + row_gap));
 		txt_title.setLineWrap(true);
+		txt_title.addKeyListener(kenter);
 		this.getContentPane().add(txt_title);
 		
 		txt_au = new JTextArea();
 		txt_au.setSize(new Dimension(text_width, tf_height));
 		txt_au.setLocation(new Point(viewBeginX2, txt_title.getY() + txt_title.getHeight() + row_gap));
 		txt_au.setLineWrap(true);
+		txt_au.addKeyListener(kenter);
 		this.getContentPane().add(txt_au);
 		
 		txt_jnl = new JTextArea();
 		txt_jnl.setSize(new Dimension(text_width, tf_height));
 		txt_jnl.setLocation(new Point(viewBeginX2, txt_au.getY() + txt_au.getHeight() + row_gap));
 		txt_jnl.setLineWrap(true);
+		txt_jnl.addKeyListener(kenter);
 		this.getContentPane().add(txt_jnl);
 		
 		
@@ -198,11 +205,19 @@ public class DetailInfoPanel extends JDialog
 		
 	}
 	
+	public int getDecision()
+	{
+		return decision;
+	}
+	
 	private class KeyEntered implements KeyListener
 	{
 		@Override
 		public void keyPressed(KeyEvent arg0) {
-			
+			if(arg0.getKeyCode() == arg0.VK_ESCAPE)
+			{
+				DetailInfoPanel.this.setVisible(false);
+			}
 		}
 
 		@Override
@@ -220,14 +235,20 @@ public class DetailInfoPanel extends JDialog
 			{
 				case 'S':
 				{
+					decision = DetailInfoPanel.S_CHOSEN;
 					DetailInfoPanel.this.setVisible(false);
+					
 				} break;
 				case 'D':
 				{
+					decision = DetailInfoPanel.D_CHOSEN;
+					DetailInfoPanel.this.setVisible(false);
 					
 				} break;
 				case 'Q':
 				{
+					decision = DetailInfoPanel.Q_CHOSEN;
+					DetailInfoPanel.this.setVisible(false);
 					
 				} break;
 			}

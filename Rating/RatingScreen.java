@@ -417,12 +417,35 @@ public class RatingScreen extends JFrame {
 				{
 					int dlgX = (int) (source.getLocation().getX()+RatingScreen.this.getLocationOnScreen().getX() + rateWidth + 20);
 					int dlgY = (int) (source.getLocation().getY()+RatingScreen.this.getLocationOnScreen().getY() + 50);
+					ArticleInfo ar = data.get(displayIndex + cursorIndex);
 					DetailInfoPanel dlg = new DetailInfoPanel(RatingScreen.this, 
 							new Point(dlgX, dlgY));
 							//SwingUtilities.convertPoint(source, new Point(source.getX(), source.getY()), RatingScreen.this));
-					ArticleInfo ar = data.get(displayIndex + cursorIndex);
+					dlg.setModal(true);
 					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), "", "");
 					dlg.setVisible(true);
+					
+					switch (dlg.getDecision())
+					{
+						case DetailInfoPanel.S_CHOSEN:
+						{
+							finalKey = "S";
+							data.get(ar_id).setRateFromUser("S");
+							tfenter.actionPerformed(null);
+						} break;
+						case DetailInfoPanel.D_CHOSEN:
+						{
+							finalKey = "D";
+							data.get(ar_id).setRateFromUser("D");
+							tfenter.actionPerformed(null);
+						} break;
+						case DetailInfoPanel.Q_CHOSEN:
+						{
+							finalKey = "Q";
+							data.get(ar_id).setRateFromUser("Q");
+							tfenter.actionPerformed(null);
+						} break;
+					}
 					
 				} break;
 			}
@@ -430,7 +453,13 @@ public class RatingScreen extends JFrame {
 			arg0.consume();
 			return;
 		}
-		
+	}
+	
+	public interface DialogCallback
+	{
+		void doS();
+		void doD();
+		void doQ();
 	}
 	
 	private void getData()
