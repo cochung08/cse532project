@@ -8,6 +8,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -132,6 +134,33 @@ public class GuiManager {
 
 	}
 
+	// public static void updateText()
+	// {
+	// JTextArea textArea = new JTextArea(5, 20);
+	//
+	// textArea.setText("2");
+	//
+	// textArea.setLineWrap(true);
+	//
+	// JScrollPane scrollPane = new JScrollPane(textArea);
+	// textArea.setEditable(true);
+	//
+	// scrollPane
+	// .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	// scrollPane.setPreferredSize(new Dimension(250, 250));
+	//
+	// //
+	// JFrame textFrame = new JFrame();
+	// textFrame.setSize(500, 500);
+	// textFrame.add(scrollPane);
+	//
+	//
+	//
+	// JButton updateButton = new JButton("")
+	//
+	// textFrame.setVisible(true);
+	// }
+
 	public static void showsSearchListGUI(
 			ArrayList<dataCollection> dataCollectionArray) {
 
@@ -146,7 +175,7 @@ public class GuiManager {
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
-		/////////////
+		// ///////////
 		final ArrayList<String> idList = new ArrayList<String>();
 
 		for (dataCollection dataitem : dataCollectionArray) {
@@ -244,6 +273,9 @@ public class GuiManager {
 		String finalRating = finalRatingData.get("FNLRATE");
 
 		if (finalRating != null)
+			return false;
+
+		if (first != null && second != null && first.equals(second))
 			return false;
 
 		final JFrame baseContainer = new JFrame();
@@ -479,7 +511,7 @@ public class GuiManager {
 			basePanel.add(field, c);
 
 			final String v1 = articleData.get(key);
-			JTextField value = new JTextField(v1);
+			final JTextField value = new JTextField(v1);
 			value.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(value);
 
@@ -491,7 +523,9 @@ public class GuiManager {
 			field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 
-					JTextArea textArea = new JTextArea(5, 20);
+					final JFrame textFrame = new JFrame();
+
+					final JTextArea textArea = new JTextArea(5, 20);
 
 					textArea.setText(v1);
 
@@ -500,12 +534,34 @@ public class GuiManager {
 					JScrollPane scrollPane = new JScrollPane(textArea);
 					textArea.setEditable(true);
 
+					textArea.addKeyListener(new KeyListener() {
+						@Override
+						public void keyPressed(KeyEvent e) {
+							if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+								e.consume();
+								value.setText(textArea.getText());
+								textFrame.dispose();
+
+							}
+						}
+
+						@Override
+						public void keyTyped(KeyEvent e) {
+						}
+
+						@Override
+						public void keyReleased(KeyEvent e) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+
 					scrollPane
 							.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 					scrollPane.setPreferredSize(new Dimension(250, 250));
 
 					//
-					JFrame textFrame = new JFrame();
+
 					textFrame.setSize(500, 500);
 					textFrame.add(scrollPane);
 					textFrame.setVisible(true);
@@ -736,23 +792,26 @@ public class GuiManager {
 
 			for (final String key : fieldInArticleTable) {
 
-				keyVector.add(key);
+				if (key.equals("TITLE") || key.equals("FNLRATE")
+						|| key.equals("FNLDESIGN")) {
+					keyVector.add(key);
 
-				JButton field = new JButton(key + ":	");
+					JButton field = new JButton(key + ":	");
 
-				c.fill = GridBagConstraints.HORIZONTAL;
-				c.gridx = 0;
-				c.weightx = 1;
-				basePanel.add(field, c);
+					c.fill = GridBagConstraints.HORIZONTAL;
+					c.gridx = 0;
+					c.weightx = 1;
+					basePanel.add(field, c);
 
-				JTextField value = new JTextField();
-				value.setBorder(BorderFactory.createLineBorder(Color.black));
-				valueVector.add(value);
+					JTextField value = new JTextField();
+					value.setBorder(BorderFactory.createLineBorder(Color.black));
+					valueVector.add(value);
 
-				c.fill = GridBagConstraints.HORIZONTAL;
-				c.gridx = 1;
-				c.weightx = 8;
-				basePanel.add(value, c);
+					c.fill = GridBagConstraints.HORIZONTAL;
+					c.gridx = 1;
+					c.weightx = 8;
+					basePanel.add(value, c);
+				}
 
 			}
 
