@@ -20,7 +20,7 @@ public class InformationPane extends JPanel
 	{
 		this.setLayout(new BorderLayout());
 		//this.setLayout(null);
-		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.setBorder(BorderFactory.createTitledBorder("Information"));
 		user = _usr;
 		no_article = _noAr;
 		
@@ -28,7 +28,7 @@ public class InformationPane extends JPanel
 		lb.setLocation(20,20);
 		lb.setSize(new Dimension(100,100));
 		lb.setHorizontalAlignment(SwingConstants.LEFT);
-		lb.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//lb.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		this.add(lb, BorderLayout.CENTER);
 		//this.add(lb);
 		

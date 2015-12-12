@@ -29,7 +29,7 @@ public class RatingScreen extends JFrame {
 	private int viewBeginY = 100;
 	private int rowGap = 5;
 	private int columnGap = 15;
-	private int rowHeight = 40;
+	private int rowHeight = 80;
 	private int rateWidth = 60;
 	private int titleWidth = 300;
 	private int frameWidth = 1200;
@@ -60,6 +60,7 @@ public class RatingScreen extends JFrame {
 	private JButton btn_save;
 	private InstructionPane insPane;
 	private InformationPane infoPane;
+	private JComboBox cmb_Fontsize;
 	
 	private JMenuBar mnuBar;
 	private JMenu mnu_File;
@@ -261,6 +262,7 @@ public class RatingScreen extends JFrame {
 			rateBoxes[iRow].addKeyListener(ratingEnt);
 			rateBoxes[iRow].addActionListener(tfenter);
 			rateBoxes[iRow].setName(Integer.toString(iRow));
+			rateBoxes[iRow].setBackground(Color.WHITE);
 			rateBoxes[iRow].addFocusListener(new FocusListener(){
 				public void focusGained(FocusEvent arg0) {
 					// TODO Auto-generated method stub

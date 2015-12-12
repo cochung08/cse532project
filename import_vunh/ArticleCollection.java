@@ -34,6 +34,8 @@ public class ArticleCollection {
 	private PreparedStatement ps_keyword = null;
 	//private String[] fieldNames = new String[]{"TI", "AU", "AF", "AD", "SO", "LA", "PT", "AT"};
 	
+	int debug = 0;
+	
 	public ArticleCollection (String _databaseName, String _user, String _password)
 	{
 		// Connect to database
@@ -148,6 +150,7 @@ public class ArticleCollection {
 			}
 		} catch(Exception ex)
 		{
+			System.out.println("Read Text File Exception");
 			System.out.print(ex.getMessage());
 		}
 		
@@ -158,6 +161,13 @@ public class ArticleCollection {
 	{
 		try
 		{
+			if (debug == 124)
+			{
+				int a = 3;
+				int b = a;
+			}
+			System.out.println(debug);
+			debug++;
 			String[] fieldList = Article.getFieldList();
 			for (int iArt = 0; iArt< articles.size(); iArt++)
 			{
@@ -223,8 +233,7 @@ public class ArticleCollection {
 				}
 			}
 			
-			// Reset article list
-			articles.clear();
+			
 			
 			/*
 			for (int iArt = 0; iArt< articles.size(); iArt++)
@@ -259,16 +268,19 @@ public class ArticleCollection {
 		}
 		catch (Exception ex)
 		{
+			System.out.println("Write to DB Exception");
 			System.out.print(ex.getMessage());
 		}
 		finally
 		{
 			try
 			{
-				
+				// Reset article list
+				articles.clear();
 			}
 			catch(Exception ex)
 			{
+				System.out.println("Write to DB Exception");
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -306,6 +318,7 @@ public class ArticleCollection {
 			String au_query = "INSERT INTO " + authorTable +" (AU_SHORT, AU_FULL, ARTICLE_ID) VALUES (?, ?, ?)";
 			ps_author = conn.prepareStatement(au_query);
 		} catch (SQLException e) {
+			System.out.println("Exception at Prepared Statement");
 			System.out.println(e.getMessage());
 			//e.getMessage();
 		}
