@@ -16,14 +16,16 @@ public class InstructionPane extends JPanel {
 	{
 		//this.setSize(new Dimension(400 300));
 		this.setLayout(new BorderLayout());
-		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		String content = "<html><pre>   S   Select the article"+
 							"<br>   D   Delete the article"+
 							"<br>   Q   Unclear article, review later"+
 							"<br>   A   for more detail information</pre></html>";
 		JLabel lb = new JLabel(content);
 		lb.setHorizontalAlignment(SwingConstants.LEFT);
-		lb.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		lb.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lb.setLocation(20,20);
+		lb.setSize(new Dimension(100,100));
 		this.add(lb, BorderLayout.CENTER);
 	}
 }

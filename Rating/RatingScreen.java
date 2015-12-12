@@ -47,6 +47,7 @@ public class RatingScreen extends JFrame {
 	private ArrayList<ArticleInfo> data;
 	private int displayIndex;
 	private int cursorIndex;
+	private String username;
 	
 	private int no_row = 9;
 	
@@ -54,10 +55,15 @@ public class RatingScreen extends JFrame {
 	private JTextField[] rateBoxes;
 	private JTextField[] titleBoxes;
 	private JScrollBar vbar;
-	private JTextField userBox;
+	//private JTextField userBox;
 	private JButton btn_load;
 	private JButton btn_save;
 	private InstructionPane insPane;
+	private InformationPane infoPane;
+	
+	private JMenuBar mnuBar;
+	private JMenu mnu_File;
+	private JMenu mnu_Help;
 	// Area of GUI components - End
 	
 	// Area of Event Handler - Begin
@@ -68,6 +74,14 @@ public class RatingScreen extends JFrame {
 	
 	public RatingScreen()
 	{
+		// Login
+		String s = (String)JOptionPane.showInputDialog(null, "Input your username", JOptionPane.OK_CANCEL_OPTION);
+		if (s == null || s.isEmpty())
+		{
+			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+		}
+		username = s;
+		
 		// This is used to receive resize event only when it is finished (do not need to update continuously)
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		this.setSize(frameWidth, frameHeight);
@@ -79,6 +93,9 @@ public class RatingScreen extends JFrame {
 		ratingEnt = new RatingEntered();
 		tfenter = new TextFieldEntered();
 		scrollAdj = new ScrollBarEvent();
+		
+		this.setTitle("Rating Screen");
+		initMenu();
 		initUI();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter()
@@ -116,14 +133,7 @@ public class RatingScreen extends JFrame {
 			}
 			
 		});
-		// Login
-		String s = (String)JOptionPane.showInputDialog(null, "Input your username", JOptionPane.OK_CANCEL_OPTION);
-		if (s == null || s.isEmpty())
-		{
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-		}
-		userBox.setText(s);
-		userBox.setEditable(false);
+		
 		loadData();
 		
 		//loadData();
@@ -135,12 +145,12 @@ public class RatingScreen extends JFrame {
 		
 		// Refresh user Interface
 		refreshUI();
-		
+		infoPane.updateInfo(username, data.size());
 	}
 	
 	private void saveData()
 	{
-		String rateperson = userBox.getText();
+		String rateperson = username;
 		for (int i = 0; i< data.size(); i++)
 		{
 			ArticleInfo af = data.get(i);
@@ -176,6 +186,18 @@ public class RatingScreen extends JFrame {
 		DatabaseManager.disconnectToDatabase();
 	}
 	
+	private void initMenu()
+	{
+		mnuBar = new JMenuBar();
+		mnu_File = new JMenu("File");
+		mnuBar.add(mnu_File);
+		
+		mnu_Help = new JMenu("Help");
+		mnuBar.add(mnu_Help);
+		
+		this.setJMenuBar(mnuBar);
+	}
+	
 	private void initUI()
 	{
 		// Remove all old components.
@@ -184,10 +206,10 @@ public class RatingScreen extends JFrame {
 		
 		
 		// Username text field
-		userBox = new JTextField();
-		userBox.setSize(new Dimension(80, 30));
-		userBox.setLocation(new Point(20, 10));
-		this.getContentPane().add(userBox);
+		infoPane = new InformationPane(this.username, data.size());
+		infoPane.setSize(new Dimension(280, 80));
+		infoPane.setLocation(new Point (20, 10));
+		this.getContentPane().add(infoPane);
 		
 		// Load data button
 		btn_load = new JButton();
@@ -204,7 +226,7 @@ public class RatingScreen extends JFrame {
 		// Save data button
 		btn_save = new JButton();
 		btn_save.setSize(new Dimension(btn_load.getWidth(), btn_load.getHeight()));
-		btn_save.setLocation(btn_load.getX() + btn_load.getWidth() + 20, btn_load.getY());
+		btn_save.setLocation(infoPane.getX() + infoPane.getWidth() + 20, infoPane.getY());
 		btn_save.setText("Save");
 		btn_save.addActionListener(new ActionListener(){
 
@@ -485,7 +507,6 @@ public class RatingScreen extends JFrame {
 		{
 			// Doing query
 			DatabaseManager.connectToDatabase();
-			String username = userBox.getText();
 			if (username.isEmpty())
 			{
 				JOptionPane.showMessageDialog(this, "Please enter username");
