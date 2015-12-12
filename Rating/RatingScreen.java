@@ -192,7 +192,7 @@ public class RatingScreen extends JFrame {
 		// Load data button
 		btn_load = new JButton();
 		btn_load.setSize(new Dimension(90, 30));
-		btn_load.setLocation(new Point(120, 10));
+		btn_load.setLocation(new Point(0, 10));
 		btn_load.setText("Load Data");
 		btn_load.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -411,18 +411,21 @@ public class RatingScreen extends JFrame {
 				{
 					finalKey = "S";
 					data.get(ar_id).setRateFromUser("S");
+					source.setText(finalKey);
 					tfenter.actionPerformed(null);
 				} break;
 				case 'D':
 				{
 					finalKey = "D";
 					data.get(ar_id).setRateFromUser("D");
+					source.setText(finalKey);
 					tfenter.actionPerformed(null);
 				} break;
 				case 'Q':
 				{
 					finalKey = "Q";
 					data.get(ar_id).setRateFromUser("Q");
+					source.setText(finalKey);
 					tfenter.actionPerformed(null);
 				} break;
 				case 'A':
@@ -443,25 +446,27 @@ public class RatingScreen extends JFrame {
 						{
 							finalKey = "S";
 							data.get(ar_id).setRateFromUser("S");
+							source.setText(finalKey);
 							tfenter.actionPerformed(null);
 						} break;
 						case DetailInfoPanel.D_CHOSEN:
 						{
 							finalKey = "D";
 							data.get(ar_id).setRateFromUser("D");
+							source.setText(finalKey);
 							tfenter.actionPerformed(null);
 						} break;
 						case DetailInfoPanel.Q_CHOSEN:
 						{
 							finalKey = "Q";
 							data.get(ar_id).setRateFromUser("Q");
+							source.setText(finalKey);
 							tfenter.actionPerformed(null);
 						} break;
 					}
 					
 				} break;
 			}
-			source.setText(finalKey);
 			arg0.consume();
 			return;
 		}
