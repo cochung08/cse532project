@@ -1,4 +1,5 @@
 package Rating;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
@@ -26,8 +27,8 @@ public class RatingScreen extends JFrame {
 	// Area for GUI parameters - Begin
 	private int viewBeginX = 20;
 	private int viewBeginY = 100;
-	private int rowGap = 20;
-	private int columnGap = 30;
+	private int rowGap = 5;
+	private int columnGap = 15;
 	private int rowHeight = 40;
 	private int rateWidth = 60;
 	private int titleWidth = 300;
@@ -56,6 +57,7 @@ public class RatingScreen extends JFrame {
 	private JTextField userBox;
 	private JButton btn_load;
 	private JButton btn_save;
+	private InstructionPane insPane;
 	// Area of GUI components - End
 	
 	// Area of Event Handler - Begin
@@ -70,6 +72,8 @@ public class RatingScreen extends JFrame {
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		this.setSize(frameWidth, frameHeight);
 		this.getContentPane().setLayout(null);
+		this.setBackground(new Color(255,255,255));
+		this.getContentPane().setBackground(new Color(255,255,255));
 
 		data = new ArrayList<ArticleInfo>();
 		ratingEnt = new RatingEntered();
@@ -213,6 +217,12 @@ public class RatingScreen extends JFrame {
 		});
 		this.getContentPane().add(btn_save);
 		
+		// Instruction Panel
+		this.insPane = new InstructionPane();
+		insPane.setSize(new Dimension(280, 80));
+		insPane.setLocation(this.getWidth() - insPane.getWidth() - 50, btn_save.getY());
+		this.getContentPane().add(insPane);
+		
 		// Information boxes
 		no_row = (this.getHeight() - (viewBeginY + 50))/(rowHeight + rowGap);
 		rateBoxes = new JTextField[no_row];
@@ -249,6 +259,8 @@ public class RatingScreen extends JFrame {
 			titleBoxes[iRow].setSize(new Dimension(titleWidth, rowHeight));
 			titleBoxes[iRow].setLocation(xTitle, yTitle);
 			titleBoxes[iRow].setEditable(false);
+			if (iRow % 2 == 0) titleBoxes[iRow].setBackground(new Color(150, 200, 230));
+			else titleBoxes[iRow].setBackground(new Color(255, 190, 155));
 			
 			this.getContentPane().add(rateBoxes[iRow]);
 			this.getContentPane().add(titleBoxes[iRow]);
