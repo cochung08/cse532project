@@ -2,6 +2,7 @@ package Rating;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -26,7 +27,7 @@ import javax.swing.event.ChangeListener;
 public class RatingScreen extends JFrame {
 	// Area for GUI parameters - Begin
 	private int viewBeginX = 20;
-	private int viewBeginY = 100;
+	private int viewBeginY = 140;
 	private int rowGap = 5;
 	private int columnGap = 15;
 	private int rowHeight = 80;
@@ -204,13 +205,19 @@ public class RatingScreen extends JFrame {
 		// Remove all old components.
 		this.getContentPane().removeAll();
 		
-		
-		
-		// Username text field
+		// Information Panel
 		infoPane = new InformationPane(this.username, data.size());
 		infoPane.setSize(new Dimension(280, 80));
-		infoPane.setLocation(new Point (20, 10));
+		infoPane.setLocation(this.getWidth() - infoPane.getWidth() - 50, 20);
 		this.getContentPane().add(infoPane);
+		
+		// Instruction Panel
+		this.insPane = new InstructionPane();
+		insPane.setSize(new Dimension(280, 80));
+		insPane.setLocation(infoPane.getX() - insPane.getWidth() - 20, infoPane.getY());
+		this.getContentPane().add(insPane);
+		
+		
 		
 		// Load data button
 		btn_load = new JButton();
@@ -226,25 +233,30 @@ public class RatingScreen extends JFrame {
 		
 		// Save data button
 		btn_save = new JButton();
-		btn_save.setSize(new Dimension(btn_load.getWidth(), btn_load.getHeight()));
-		btn_save.setLocation(infoPane.getX() + infoPane.getWidth() + 20, infoPane.getY());
+		btn_save.setSize(new Dimension(90, 50));
+		btn_save.setLocation(insPane.getX() - btn_save.getWidth() - 20, infoPane.getY());
 		btn_save.setText("Save");
 		btn_save.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				saveData();
-				
 			}
 			
 		});
 		this.getContentPane().add(btn_save);
 		
-		// Instruction Panel
-		this.insPane = new InstructionPane();
-		insPane.setSize(new Dimension(280, 80));
-		insPane.setLocation(this.getWidth() - insPane.getWidth() - 50, btn_save.getY());
-		this.getContentPane().add(insPane);
+		// Font size combo box
+		this.cmb_Fontsize = new JComboBox<String>(new String[]{"8","12","16","20","24","28"});
+		cmb_Fontsize.setSize(new Dimension(90, 30));
+		cmb_Fontsize.setLocation(viewBeginX, btn_save.getY());
+		cmb_Fontsize.setSelectedIndex(2);
+		cmb_Fontsize.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				RatingScreen.this.updateFontSize();
+			}
+		});
+		this.getContentPane().add(cmb_Fontsize);
 		
 		// Information boxes
 		no_row = (this.getHeight() - (viewBeginY + 50))/(rowHeight + rowGap);
@@ -307,6 +319,8 @@ public class RatingScreen extends JFrame {
 			}
 			
 		});
+		
+		updateFontSize();
 	}
 	
 	private void refreshUI()
@@ -458,7 +472,7 @@ public class RatingScreen extends JFrame {
 					int dlgY = (int) (source.getLocation().getY()+RatingScreen.this.getLocationOnScreen().getY() + 50);
 					ArticleInfo ar = data.get(displayIndex + cursorIndex);
 					DetailInfoPanel dlg = new DetailInfoPanel(RatingScreen.this, 
-							new Point(dlgX, dlgY));
+							new Point(dlgX, dlgY), new Font("Arial", Font.PLAIN, Integer.parseInt(cmb_Fontsize.getSelectedItem().toString())));
 							//SwingUtilities.convertPoint(source, new Point(source.getX(), source.getY()), RatingScreen.this));
 					dlg.setModal(true);
 					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), "", "");
@@ -604,6 +618,15 @@ public class RatingScreen extends JFrame {
 		} catch (Exception ex)
 		{
 			System.out.println(ex.getMessage());
+		}
+	}
+	
+	private void updateFontSize()
+	{
+		for (int i = 0; i< rateBoxes.length; i++)
+		{
+			titleBoxes[i].setFont(new Font("Arial", Font.PLAIN, Integer.parseInt(cmb_Fontsize.getSelectedItem().toString())));
+			rateBoxes[i].setFont(new Font("Arial", Font.PLAIN, Integer.parseInt(cmb_Fontsize.getSelectedItem().toString())));
 		}
 	}
 	

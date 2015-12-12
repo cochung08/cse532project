@@ -2,6 +2,7 @@ package Rating;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -53,13 +54,15 @@ public class DetailInfoPanel extends JDialog
 	KeyEntered kenter;
 	
 	private JFrame parent;
+	private Font font;
 	
-	public DetailInfoPanel (JFrame _parent, Point _pos)
+	public DetailInfoPanel (JFrame _parent, Point _pos, Font _font)
 	{
 		kenter = new KeyEntered();
 		
 		this.setLayout(null);
 		this.parent = _parent;
+		this.font = _font;
 		this.getContentPane().setBackground(new Color(190, 190, 190));
 		initUI();
 		this.setLocationRelativeTo(parent);
@@ -79,7 +82,7 @@ public class DetailInfoPanel extends JDialog
 	private void initUI()
 	{
 		// This dialog
-		this.setSize(new Dimension(1200, 600));
+		this.setSize(new Dimension(1050, 450));
 		this.addWindowFocusListener(new WindowFocusListener(){
 
 			@Override
@@ -147,6 +150,7 @@ public class DetailInfoPanel extends JDialog
 		txt_abs = new JTextArea();
 		txt_abs.addKeyListener(kenter);
 		txt_abs.setLineWrap(true);
+		txt_abs.setFont(font);
 		
 		scr_abs = new JScrollPane(txt_abs);
 		scr_abs.setSize(new Dimension(text_width, ta_height));
@@ -158,6 +162,7 @@ public class DetailInfoPanel extends JDialog
 		txt_title.setLocation(new Point(viewBeginX2, scr_abs.getY() + scr_abs.getHeight() + row_gap));
 		txt_title.setLineWrap(true);
 		txt_title.addKeyListener(kenter);
+		txt_title.setFont(font);
 		this.getContentPane().add(txt_title);
 		
 		txt_au = new JTextArea();
@@ -165,6 +170,7 @@ public class DetailInfoPanel extends JDialog
 		txt_au.setLocation(new Point(viewBeginX2, txt_title.getY() + txt_title.getHeight() + row_gap));
 		txt_au.setLineWrap(true);
 		txt_au.addKeyListener(kenter);
+		txt_au.setFont(font);
 		this.getContentPane().add(txt_au);
 		
 		txt_jnl = new JTextArea();
@@ -172,6 +178,7 @@ public class DetailInfoPanel extends JDialog
 		txt_jnl.setLocation(new Point(viewBeginX2, txt_au.getY() + txt_au.getHeight() + row_gap));
 		txt_jnl.setLineWrap(true);
 		txt_jnl.addKeyListener(kenter);
+		txt_jnl.setFont(font);
 		this.getContentPane().add(txt_jnl);
 		
 		

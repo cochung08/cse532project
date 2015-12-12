@@ -20,7 +20,8 @@ public class InformationPane extends JPanel
 	{
 		this.setLayout(new BorderLayout());
 		//this.setLayout(null);
-		this.setBorder(BorderFactory.createTitledBorder("Information"));
+		this.setBorder(BorderFactory.createTitledBorder("User Info"));
+		this.setBackground(new Color(255,255,255));
 		user = _usr;
 		no_article = _noAr;
 		

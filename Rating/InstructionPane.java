@@ -16,6 +16,7 @@ public class InstructionPane extends JPanel {
 	{
 		//this.setSize(new Dimension(400 300));
 		this.setLayout(new BorderLayout());
+		this.setBackground(new Color(255,255,255));
 		this.setBorder(BorderFactory.createTitledBorder("Instruction"));
 		String content = "<html><pre>   S   Select the article"+
 							"<br>   D   Delete the article"+
