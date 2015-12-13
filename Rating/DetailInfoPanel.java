@@ -204,7 +204,7 @@ public class DetailInfoPanel extends JDialog
 		this.getContentPane().add(lb_au);
 		
 		lb_jnl = new JLabel();
-		lb_jnl.setText("Author");
+		lb_jnl.setText("Journal");
 		lb_jnl.setSize(new Dimension(label_width, label_height));
 		lb_jnl.setLocation(viewBeginX1, txt_au.getY() + txt_au.getHeight() + row_gap);
 		this.getContentPane().add(lb_jnl);

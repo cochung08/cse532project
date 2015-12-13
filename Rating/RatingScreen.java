@@ -18,6 +18,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.UIManager;
 
@@ -476,14 +477,30 @@ public class RatingScreen extends JFrame {
 				} break;
 				case 'A':
 				{
+					// Retrieve author information
+					ArticleInfo ar = data.get(displayIndex + cursorIndex);
+					String au_list = "";
+					String au_sql = "SELECT AU_FULL FROM AUTHOR9 WHERE ARTICLE_ID = " + ar.getID();
+					ResultSet auRes = DatabaseManager.query(au_sql);
+					try {
+						while (auRes.next())
+						{
+							au_list += auRes.getString("au_full");
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ar.addValue("au_full", au_list);
+					
 					int dlgX = (int) (source.getLocation().getX()+RatingScreen.this.getLocationOnScreen().getX() + rateWidth + 20);
 					int dlgY = (int) (source.getLocation().getY()+RatingScreen.this.getLocationOnScreen().getY() + 50);
-					ArticleInfo ar = data.get(displayIndex + cursorIndex);
+					
 					DetailInfoPanel dlg = new DetailInfoPanel(RatingScreen.this, 
 							new Point(dlgX, dlgY), new Font("Arial", Font.PLAIN, Integer.parseInt(cmb_Fontsize.getSelectedItem().toString())));
 							//SwingUtilities.convertPoint(source, new Point(source.getX(), source.getY()), RatingScreen.this));
 					dlg.setModal(true);
-					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), "", "");
+					dlg.setContent(ar.getValue("abs"), ar.getValue("title"), ar.getValue("au_full"), "");
 					dlg.setVisible(true);
 					
 					switch (dlg.getDecision())
@@ -556,7 +573,18 @@ public class RatingScreen extends JFrame {
 				{
 					String temp = rs.getString(cols[i]);
 					ar.addValue(cols[i], temp);
+					
 				}
+				
+				// Retrieve author information
+//				String au_list = "";
+//				String au_sql = "SELECT AU_FULL FROM AUTHOR9 WHERE ARTICLE_ID = " + ar.getID();
+//				ResultSet auRes = DatabaseManager.query(au_sql);
+//				while (auRes.next())
+//				{
+//					au_list += auRes.getString("au_full");
+//				}
+//				ar.addValue("au_full", au_list);
 				
 				// Set rating information
 				String rate1 = rs.getString("rate1");
