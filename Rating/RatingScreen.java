@@ -164,12 +164,12 @@ public class RatingScreen extends JFrame {
 				String rateCol = "";
 				if (af.getActiveRate() == 1)
 				{
-					perCol = "RATE_PERSON1";
+					perCol = "RATE_PER1";
 					rateCol = "RATE1";
 				}
 				else
 				{
-					perCol = "RATE_PERSON2";
+					perCol = "RATE_PER2";
 					rateCol = "RATE2";
 				}
 				
