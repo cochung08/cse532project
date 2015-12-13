@@ -340,10 +340,13 @@ public class QueryFunctions {
 				fieldInArticleTable.add(md.getColumnLabel(i));
 			}
 
-			String joinStr = DataLoading.articleTable
-					+ " LEFT JOIN "+DataLoading.authorTable+" ON "
-					+ DataLoading.articleTable
-					+ ".ARTICLE_ID= "+DataLoading.authorTable+".ARTICLE_ID LEFT JOIN "+DataLoading.keywordTable+" ON "+DataLoading.keywordTable+".ARTICLE_ID = "+DataLoading.authorTable+".ARTICLE_ID";
+			String joinStr = DataLoading.articleTable + " LEFT JOIN "
+					+ DataLoading.authorTable + " ON "
+					+ DataLoading.articleTable + ".ARTICLE_ID= "
+					+ DataLoading.authorTable + ".ARTICLE_ID LEFT JOIN "
+					+ DataLoading.keywordTable + " ON "
+					+ DataLoading.keywordTable + ".ARTICLE_ID = "
+					+ DataLoading.authorTable + ".ARTICLE_ID";
 
 			String search_article_query = "SELECT * from " + joinStr
 					+ " where ";
@@ -407,25 +410,21 @@ public class QueryFunctions {
 
 		String article_id_key = "ARTICLE_ID";
 
-		String keywordTable = "KEYWORD";
-
 		ArrayList<dataCollection> dataCollectionArray = new ArrayList<dataCollection>();
 
 		for (String article_id_value : idList) {
 
 			ListMultimap<String, String> keywordData = QueryFunctions
-					.searchAuthorOrKeyword(keywordTable, article_id_key,
-							article_id_value);
+					.searchAuthorOrKeyword(DataLoading.keywordTable,
+							article_id_key, article_id_value);
 
 			LinkedHashMap<String, String> articleData = QueryFunctions
 					.searchArticle(DataLoading.articleTable, article_id_key,
 							article_id_value);
 
-			String authorTable = "AUTHOR";
-
 			ListMultimap<String, String> authorData = QueryFunctions
-					.searchAuthorOrKeyword(authorTable, article_id_key,
-							article_id_value);
+					.searchAuthorOrKeyword(DataLoading.authorTable,
+							article_id_key, article_id_value);
 
 			List<String> tmp = keywordData.get("KEYWORD");
 			// System.out.println(tmp.toString());
@@ -443,7 +442,7 @@ public class QueryFunctions {
 		return dataCollectionArray;
 	}
 
-	static boolean ifDuplicate(String title, String year, String issue,
+	static ArrayList<Integer>  ifDuplicate(String title, String year, String issue,
 			String author) {
 
 		LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
@@ -459,15 +458,34 @@ public class QueryFunctions {
 
 		ArrayList<dataCollection> dataResultset2 = searchJoinTable(updateMap2);
 
+		
+		
+		
+		
 		if (dataResultset.size() > 0) {
 			System.out.println(1);
-			return true;
+			ArrayList<Integer> duplicatedIdList = new ArrayList<Integer>();
+			for(int i=0;i<dataResultset.size();i++)
+			{
+				String dupId = dataResultset.get(0).articleMap.get("ARTICLE_ID");
+				duplicatedIdList.add(Integer.parseInt(dupId));
+				System.out.println(dupId);
+			}
+			
+			return duplicatedIdList;
 		} else {
 			if (dataResultset2.size() > 0) {
 				System.out.println(2);
-				return true;
+				ArrayList<Integer> duplicatedIdList = new ArrayList<Integer>();
+				for(int i=0;i<dataResultset.size();i++)
+				{
+					String dupId = dataResultset2.get(0).articleMap.get("ARTICLE_ID_");
+					duplicatedIdList.add(Integer.parseInt(dupId));
+					System.out.println(dupId);
+				}
+				return duplicatedIdList;
 			} else
-				return false;
+				return null;
 
 			// for (int j = 0; j < dataResultset.size(); j++) {
 			// String title_ = dataResultset.get(j).articleMap.get("TITLE");
@@ -518,8 +536,8 @@ public class QueryFunctions {
 				String value = articleMap.get(key);
 				key = Strings.padEnd(key, 15, ' ');
 
-				System.out.println("size:" + key.length());
-				System.out.println(key);
+				// System.out.println("size:" + key.length());
+				// System.out.println(key);
 
 				String tmp = key + "- " + value;
 				lines.add(tmp);

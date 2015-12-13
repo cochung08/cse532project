@@ -132,9 +132,9 @@ public class DataLoading {
 			System.out.println("year:" + year);
 			System.out.println("issue:" + issue);
 
-			boolean ifDup = QueryFunctions.ifDuplicate(title, year, issue,
-					author);
-			if (ifDup == true) {
+			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
+					year, issue, author);
+			if (dupIdList != null) {
 				System.out.println("duplicate,dont add");
 				return;
 			} else {
@@ -290,9 +290,9 @@ public class DataLoading {
 				e.printStackTrace();
 			}
 
-			boolean ifDup = QueryFunctions.ifDuplicate(title, year, issue,
-					author);
-			if (ifDup == true) {
+			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
+					year, issue, author);
+			if (dupIdList != null) {
 				System.out.println("duplicate,dont add");
 				return;
 			} else {

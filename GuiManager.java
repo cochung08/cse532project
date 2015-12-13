@@ -33,6 +33,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -79,30 +80,61 @@ public class GuiManager {
 		JButton openButton = new JButton("loadData");
 		openButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				JFileChooser chooser = new JFileChooser("data_files");
-				chooser.setMultiSelectionEnabled(true);
-				int option = chooser.showOpenDialog(baseContainer);
-				if (option == JFileChooser.APPROVE_OPTION) {
-					File[] sf = chooser.getSelectedFiles();
 
-					for (int i = 0; i < sf.length; i++) {
+				dataLoadingGui();
 
-						String path = sf[i].getAbsolutePath();
-						// System.out.println(path);
-
-						if (path.contains(PUDMED)) {
-							DataLoading.loadDataFromPudmed(path);
-
-						} else if (path.contains(COCHRANE)) {
-
-							DataLoading.loadDataFromCochrane(path);
-						}
-					}
-				}
+				// JFileChooser chooser = new JFileChooser("data_files");
+				// chooser.setMultiSelectionEnabled(true);
+				// int option = chooser.showOpenDialog(baseContainer);
+				// if (option == JFileChooser.APPROVE_OPTION) {
+				// File[] sf = chooser.getSelectedFiles();
+				//
+				// for (int i = 0; i < sf.length; i++) {
+				//
+				// String path = sf[i].getAbsolutePath();
+				// // System.out.println(path);
+				//
+				// if (path.contains(PUDMED)) {
+				// DataLoading.loadDataFromPudmed(path);
+				//
+				// } else if (path.contains(COCHRANE)) {
+				//
+				// DataLoading.loadDataFromCochrane(path);
+				// }
+				// }
+				// }
 			}
 		});
 
 		baseContainer.add(openButton, c);
+
+		// JButton openButton = new JButton("loadData");
+		// openButton.addActionListener(new ActionListener() {
+		// public void actionPerformed(ActionEvent ae) {
+		// JFileChooser chooser = new JFileChooser("data_files");
+		// chooser.setMultiSelectionEnabled(true);
+		// int option = chooser.showOpenDialog(baseContainer);
+		// if (option == JFileChooser.APPROVE_OPTION) {
+		// File[] sf = chooser.getSelectedFiles();
+		//
+		// for (int i = 0; i < sf.length; i++) {
+		//
+		// String path = sf[i].getAbsolutePath();
+		// // System.out.println(path);
+		//
+		// if (path.contains(PUDMED)) {
+		// DataLoading.loadDataFromPudmed(path);
+		//
+		// } else if (path.contains(COCHRANE)) {
+		//
+		// DataLoading.loadDataFromCochrane(path);
+		// }
+		// }
+		// }
+		// }
+		// });
+		//
+		// baseContainer.add(openButton, c);
 
 		JButton searchButton = new JButton("search");
 		searchButton.addActionListener(new ActionListener() {
@@ -142,32 +174,72 @@ public class GuiManager {
 
 	}
 
-	// public static void updateText()
-	// {
-	// JTextArea textArea = new JTextArea(5, 20);
-	//
-	// textArea.setText("2");
-	//
-	// textArea.setLineWrap(true);
-	//
-	// JScrollPane scrollPane = new JScrollPane(textArea);
-	// textArea.setEditable(true);
-	//
-	// scrollPane
-	// .setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	// scrollPane.setPreferredSize(new Dimension(250, 250));
-	//
-	// //
-	// JFrame textFrame = new JFrame();
-	// textFrame.setSize(500, 500);
-	// textFrame.add(scrollPane);
-	//
-	//
-	//
-	// JButton updateButton = new JButton("")
-	//
-	// textFrame.setVisible(true);
-	// }
+	static void chooseFile(int type, JPanel baseContainer) {
+
+		JFileChooser chooser = new JFileChooser("data_files");
+		chooser.setMultiSelectionEnabled(true);
+		int option = chooser.showOpenDialog(baseContainer);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			File[] sf = chooser.getSelectedFiles();
+
+			for (int i = 0; i < sf.length; i++) {
+
+				String path = sf[i].getAbsolutePath();
+				// System.out.println(path);
+
+				if (type == 1) {
+					DataLoading.loadDataFromCochrane(path);
+
+				} else if (type == 2) {
+					DataLoading.loadDataFromPudmed(path);
+
+				}
+			}
+		}
+	}
+
+	public static void dataLoadingGui() {
+		JFrame mainFrame = new JFrame();
+		final JPanel baseContainer = new JPanel();
+		baseContainer.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 1;
+		c.weightx = 8;
+
+		final String COCHRANE = "cochrane";
+		final String PUBMED = "pubmed";
+		final String PSYCINFO = "PsycInfo";
+
+		String[] dbList = { COCHRANE, PUBMED, PSYCINFO };
+
+		JComboBox dbListItem = new JComboBox(dbList);
+		dbListItem.setSelectedIndex(0);
+
+		dbListItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JComboBox cb = (JComboBox) arg0.getSource();
+				String dbName = (String) cb.getSelectedItem();
+				if (dbName.equals(COCHRANE)) {
+					chooseFile(1, baseContainer);
+				} else if (dbName.equals(COCHRANE)) {
+					chooseFile(2, baseContainer);
+				} else if (dbName.equals(COCHRANE)) {
+					chooseFile(3, baseContainer);
+				}
+
+			}
+		});
+
+		baseContainer.add(dbListItem, c);
+
+		mainFrame.add(baseContainer);
+		mainFrame.setSize(1000, 500);
+		mainFrame.setVisible(true);
+
+		//
+
+	}
 
 	public static void showsSearchListGUI(
 			ArrayList<dataCollection> dataCollectionArray) {
