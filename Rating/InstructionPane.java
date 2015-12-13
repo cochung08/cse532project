@@ -18,10 +18,10 @@ public class InstructionPane extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.setBackground(new Color(255,255,255));
 		this.setBorder(BorderFactory.createTitledBorder("Instruction"));
-		String content = "<html><pre>   S   Select the article"+
-							"<br>   D   Delete the article"+
-							"<br>   Q   Unclear article, review later"+
-							"<br>   A   for more detail information</pre></html>";
+		String content = "<html>S   Select the article"+
+							"<br>D   Delete the article"+
+							"<br>Q   Unclear article, review later"+
+							"<br>A   for more detail information</html>";
 		JLabel lb = new JLabel(content);
 		lb.setHorizontalAlignment(SwingConstants.LEFT);
 		//lb.setBorder(BorderFactory.createLineBorder(Color.BLACK));

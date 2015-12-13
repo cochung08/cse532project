@@ -19,6 +19,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import javax.swing.UIManager;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -62,6 +63,7 @@ public class RatingScreen extends JFrame {
 	private InstructionPane insPane;
 	private InformationPane infoPane;
 	private JComboBox cmb_Fontsize;
+	private JLabel lb_Fontsize;
 	
 	private JMenuBar mnuBar;
 	private JMenu mnu_File;
@@ -213,7 +215,7 @@ public class RatingScreen extends JFrame {
 		
 		// Instruction Panel
 		this.insPane = new InstructionPane();
-		insPane.setSize(new Dimension(280, 80));
+		insPane.setSize(new Dimension(300, 110));
 		insPane.setLocation(infoPane.getX() - insPane.getWidth() - 20, infoPane.getY());
 		this.getContentPane().add(insPane);
 		
@@ -234,7 +236,7 @@ public class RatingScreen extends JFrame {
 		// Save data button
 		btn_save = new JButton();
 		btn_save.setSize(new Dimension(90, 50));
-		btn_save.setLocation(insPane.getX() - btn_save.getWidth() - 20, infoPane.getY());
+		btn_save.setLocation(insPane.getX() - btn_save.getWidth() - 20, infoPane.getY() + 10);
 		btn_save.setText("Save");
 		btn_save.addActionListener(new ActionListener(){
 
@@ -246,10 +248,16 @@ public class RatingScreen extends JFrame {
 		});
 		this.getContentPane().add(btn_save);
 		
+		// Font size label
+		lb_Fontsize = new JLabel("Font Size");
+		lb_Fontsize.setSize(new Dimension(90, 15));
+		lb_Fontsize.setLocation(viewBeginX, infoPane.getY());
+		this.getContentPane().add(lb_Fontsize);
+		
 		// Font size combo box
 		this.cmb_Fontsize = new JComboBox<String>(new String[]{"8","12","16","20","24","28"});
 		cmb_Fontsize.setSize(new Dimension(90, 30));
-		cmb_Fontsize.setLocation(viewBeginX, btn_save.getY());
+		cmb_Fontsize.setLocation(viewBeginX, lb_Fontsize.getHeight() + lb_Fontsize.getY() + 10);
 		cmb_Fontsize.setSelectedIndex(2);
 		cmb_Fontsize.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
@@ -632,6 +640,12 @@ public class RatingScreen extends JFrame {
 	
 	public static void main(String[] agrs)
 	{
+		try {
+			  UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+
+			} catch (Exception e) {
+			  }
+
 		EventQueue.invokeLater(new Runnable(){
 			public void run()
 			{
