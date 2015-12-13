@@ -67,6 +67,7 @@ public class GuiManager {
 	static final String COCHRANE = "Cochrane";
 
 	public static void showMainPage() {
+
 		try {
 			UIManager
 					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -75,6 +76,7 @@ public class GuiManager {
 		}
 
 		JFrame mainFrame = new JFrame();
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final JPanel baseContainer = new JPanel();
 		baseContainer.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
