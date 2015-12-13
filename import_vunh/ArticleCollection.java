@@ -167,7 +167,7 @@ public class ArticleCollection {
 				int a = 3;
 				int b = a;
 			}
-			System.out.println(debug);
+			//System.out.println(debug);
 			debug++;
 			String[] fieldList = Article.getFieldList();
 			for (int iArt = 0; iArt< articles.size(); iArt++)

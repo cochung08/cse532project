@@ -173,7 +173,7 @@ public class RatingScreen extends JFrame {
 					rateCol = "RATE2";
 				}
 				
-				String sql = "UPDATE ARTICLE2 SET " +rateCol+ "='" +af.getRate() +
+				String sql = "UPDATE ARTICLE9 SET " +rateCol+ "='" +af.getRate() +
 						"',"+ perCol+ "='" + rateperson + "' WHERE ARTICLE_ID = " + Integer.toString(af.getID());
 				DatabaseManager.update(sql);
 				
@@ -537,10 +537,10 @@ public class RatingScreen extends JFrame {
 				return;
 			}
 			String temp_usr = "'" + username +"'";
-			String query = "SELECT article_id, abs, title, year, rate1, rate_person1, rate2, rate_person2 from article2"
+			String query = "SELECT article_id, abs, title, year, rate1, rate_per1, rate2, rate_per2 from article9"
 					+ " where (rate2 is null) or "
 					+ "(rate1 is null) or"
-					+ "((rate_person1 = "+temp_usr+") and (rate1 = 'Q')) or ((rate_person2 = "+temp_usr+") and (rate2 = 'Q'))";
+					+ "((rate_per1 = "+temp_usr+") and (rate1 = 'Q')) or ((rate_per2 = "+temp_usr+") and (rate2 = 'Q'))";
 			
 			
 			ResultSet rs = DatabaseManager.query(query);
@@ -561,8 +561,8 @@ public class RatingScreen extends JFrame {
 				// Set rating information
 				String rate1 = rs.getString("rate1");
 				String rate2 = rs.getString("rate2");
-				String rate_person1 = rs.getString("rate_person1");
-				String rate_person2 = rs.getString("rate_person2");
+				String rate_person1 = rs.getString("rate_per1");
+				String rate_person2 = rs.getString("rate_per2");
 				//ar.setRateFromDB(rate1, 1);
 				//ar.setRateFromDB(rate2, 2);
 				
