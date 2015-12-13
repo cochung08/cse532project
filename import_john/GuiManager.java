@@ -3,6 +3,7 @@ package import_john;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -53,6 +54,8 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.text.JTextComponent;
 
 import org.jdesktop.xswingx.PromptSupport;
+
+import Rating.RatingScreen;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ListMultimap;
@@ -147,6 +150,24 @@ public class GuiManager {
 		});
 
 		baseContainer.add(searchButton, c);
+
+		JButton RatingButton = new JButton("Rating");
+
+		RatingButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				System.out.println("RatingButton");
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						RatingScreen rt = new RatingScreen();
+						rt.setVisible(true);
+					}
+				});
+
+			}
+		});
+
+		baseContainer.add(RatingButton, c);
 
 		JButton finalRatingButton = new JButton("finalRating");
 
@@ -879,7 +900,7 @@ public class GuiManager {
 			for (final String key : fieldInArticleTable) {
 
 				if (key.equals("TITLE") || key.equals("FNLRATE")
-						|| key.equals("FNLDESIGN")) {
+						|| key.equals("FNLDESIGN") || key.equals("SUBJECT_TAG")) {
 					keyVector.add(key);
 
 					JButton field = new JButton(key + ":	");
