@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+import import_john.*;
 
 
 public class ArticleCollection {
@@ -25,9 +26,9 @@ public class ArticleCollection {
 	private String url = "jdbc:db2://localhost:50000/hwone";		// Adjust your database's name here
 	private String user;								// Put your database's username here
 	private String password;					// Put your database's password here
-	private String articleTable = "article2";
-	private String authorTable = "author";
-	private String keywordTable = "keyword";
+	private String articleTable = import_john.DataLoading.articleTable;
+	private String authorTable = import_john.DataLoading.authorTable;
+	private String keywordTable = import_john.DataLoading.keywordTable;
 	private Connection conn = null;
 	private PreparedStatement ps_article = null;
 	private PreparedStatement ps_author = null;
