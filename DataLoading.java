@@ -8,31 +8,32 @@ import java.util.Vector;
 
 public class DataLoading {
 
-	static String articleTable = "article3";
-	static String authorTable = "author";
-	static String keywordTable = "keyword";
+	static String articleTable = "article9";
+	static String authorTable = "author9";
+	static String keywordTable = "keyword9";
+	static int sizeOfArticle = 29;
 
-	static PreparedStatement ps_author = null;
-	static PreparedStatement ps_keyword = null;
-	static PreparedStatement ps_article = null;
+	static String insert_query = "INSERT INTO "
+			+ articleTable
+			+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
+			+ ",PUBTYPE,FUND,SUBJECT_TAG,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF,RATE1,RATE_PER1,RATE2,RATE_PER2) VALUES"
+			+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	public static void inital() {
+	static String au_query = "INSERT INTO " + authorTable
+			+ " (AU_SHORT, AU_FULL, ARTICLE_ID) VALUES (?, ?, ?)";
+
+	static String kw_query = "INSERT INTO " + keywordTable
+			+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
+
+	public static void loadDataFromPudmed(String pathname) {
+		PreparedStatement ps_author = null;
+		PreparedStatement ps_keyword = null;
+		PreparedStatement ps_article = null;
 
 		try {
 
-			String au_query = "INSERT INTO " + authorTable
-					+ " (AU_SHORT, AU_FULL, ARTICLE_ID) VALUES (?, ?, ?)";
 			ps_author = DatabaseConnection.conn.prepareStatement(au_query);
-
-			String kw_query = "INSERT INTO " + keywordTable
-					+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
 			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
-
-			String insert_query = "INSERT INTO "
-					+ articleTable
-					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
-					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF,RATE1,RATE_PER1,RATE2,RATE_PER2) VALUES"
-					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			ps_article = DatabaseConnection.conn.prepareStatement(insert_query,
 					new String[] { "article_id" });
 
@@ -40,16 +41,12 @@ public class DataLoading {
 			e.printStackTrace();
 		}
 
-	}
-
-	public static void loadDataFromPudmed(String pathname) {
-
 		Vector<String> authorsVector = new Vector<String>();
 		Vector<String> keyWordsVector = new Vector<String>();
 
 		try {
 
-			int size = 28;
+			int size = sizeOfArticle;
 			String[] matchTable = new String[size];
 			String[] insertTable = new String[size];
 			for (int i = 0; i < size; i++) {
@@ -93,11 +90,14 @@ public class DataLoading {
 						}
 
 						if (key.equals("TI")) {
+
 							title = value;
 						}
 
-						if (key.equals("DA")) {
+						if (key.equals("DP")) {
+							value = value.substring(0, 4);
 							year = value;
+							System.out.println("hahhh" + value);
 						}
 
 						// System.out.println(key);
@@ -113,8 +113,10 @@ public class DataLoading {
 
 						for (int i = 0; i < size; i++) {
 							if (matchTable[i] != null)
-								if (matchTable[i].equals(key))
+								if (matchTable[i].equals(key)) {
 									insertTable[i] = value;
+									System.out.println("insert: " + value);
+								}
 
 						}
 					}
@@ -194,6 +196,21 @@ public class DataLoading {
 
 	public static void loadDataFromCochrane(String pathname) {
 
+		PreparedStatement ps_author = null;
+		PreparedStatement ps_keyword = null;
+		PreparedStatement ps_article = null;
+
+		try {
+
+			ps_author = DatabaseConnection.conn.prepareStatement(au_query);
+			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
+			ps_article = DatabaseConnection.conn.prepareStatement(insert_query,
+					new String[] { "article_id" });
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		String[] keyWords = null;
 		Vector<String> authorsVector = new Vector<String>();
 
@@ -205,7 +222,7 @@ public class DataLoading {
 
 		try {
 
-			int size = 28;
+			int size = sizeOfArticle;
 			String[] matchTable = new String[size];
 			String[] insertTable = new String[size];
 			for (int i = 0; i < size; i++) {
@@ -282,15 +299,6 @@ public class DataLoading {
 				System.out.println("no duplicate,add");
 			}
 
-			String insertTableSQL = "INSERT INTO "
-					+ articleTable
-					+ "( CIT,REF,AU_CORR,TITLE,JNL_TIT,VOL,ISSUE,YEAR,PG_ST,PG_EN,LANG,ABS,PUBID,DOI,URL"
-					+ ",PUBTYPE,FUND,RATE,SCR,FNLRATE,FNLDESIGN,MCNRATE,MCNCONF,RATE1,RATE_PER1,RATE2,RATE_PER2) VALUES"
-					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			PreparedStatement ps_article = DatabaseConnection.conn
-					.prepareStatement(insertTableSQL,
-							new String[] { "article_id" });
-
 			for (int w = 1; w < size; w++) {
 
 				if (insertTable[w] == null) {
@@ -304,12 +312,6 @@ public class DataLoading {
 			DatabaseConnection.conn.commit();
 
 			ResultSet rsKey = ps_article.getGeneratedKeys();
-
-			PreparedStatement ps_keyword = null;
-			String keywordTable = "keyword";
-			String kw_query = "INSERT INTO " + keywordTable
-					+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
-			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
 
 			while (rsKey.next()) {
 				int idColVar = rsKey.getInt(1);

@@ -53,6 +53,7 @@ import org.jdesktop.xswingx.PromptSupport;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ListMultimap;
+import javax.swing.UIManager;
 
 public class GuiManager {
 
@@ -60,6 +61,13 @@ public class GuiManager {
 	static final String COCHRANE = "Cochrane";
 
 	public static void showMainPage() {
+		try {
+			UIManager
+					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+
+		} catch (Exception e) {
+		}
+
 		JFrame mainFrame = new JFrame();
 		final JPanel baseContainer = new JPanel();
 		baseContainer.setLayout(new GridBagLayout());
@@ -363,14 +371,14 @@ public class GuiManager {
 		abstractScrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		Border bd1 = new EmptyBorder(10, 100, 10, 100);
-		Border bd2 = BorderFactory.createLineBorder(Color.black);
-		keywordsScrollPane.setBorder(new CompoundBorder(bd1, bd2));
-		abstractScrollPane.setBorder(new CompoundBorder(bd1, bd2));
-		JPanel1.setBorder(new CompoundBorder(bd1, bd2));
-		JPanel3.setBorder(new CompoundBorder(bd1, bd2));
-		JPanel4.setBorder(new CompoundBorder(bd1, bd2));
-		JPanel5.setBorder(new CompoundBorder(bd1, bd2));
+		// Border bd1 = new EmptyBorder(10, 100, 10, 100);
+		// Border bd2 = BorderFactory.createLineBorder(Color.black);
+		// keywordsScrollPane.setBorder(new CompoundBorder(bd1, bd2));
+		// abstractScrollPane.setBorder(new CompoundBorder(bd1, bd2));
+		// JPanel1.setBorder(new CompoundBorder(bd1, bd2));
+		// JPanel3.setBorder(new CompoundBorder(bd1, bd2));
+		// JPanel4.setBorder(new CompoundBorder(bd1, bd2));
+		// JPanel5.setBorder(new CompoundBorder(bd1, bd2));
 
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -512,7 +520,7 @@ public class GuiManager {
 
 			final String v1 = articleData.get(key);
 			final JTextField value = new JTextField(v1);
-			value.setBorder(BorderFactory.createLineBorder(Color.black));
+			// value.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(value);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -665,7 +673,7 @@ public class GuiManager {
 
 			final String v1 = requestedData.get(key);
 			JTextField value = new JTextField(v1);
-			value.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			// value.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 			valueVector.add(value);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -781,7 +789,7 @@ public class GuiManager {
 			Statement st = DatabaseConnection.conn.createStatement();
 
 			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
-					+ "article3");
+					+ DataLoading.articleTable);
 			ResultSetMetaData md = rset.getMetaData();
 
 			Vector<String> fieldInArticleTable = new Vector<String>();
@@ -804,7 +812,7 @@ public class GuiManager {
 					basePanel.add(field, c);
 
 					JTextField value = new JTextField();
-					value.setBorder(BorderFactory.createLineBorder(Color.black));
+					// value.setBorder(BorderFactory.createLineBorder(Color.black));
 					valueVector.add(value);
 
 					c.fill = GridBagConstraints.HORIZONTAL;
@@ -825,7 +833,7 @@ public class GuiManager {
 			basePanel.add(authorField, c);
 
 			JTextField authorValue = new JTextField();
-			authorValue.setBorder(BorderFactory.createLineBorder(Color.black));
+			// authorValue.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(authorValue);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -845,7 +853,7 @@ public class GuiManager {
 			basePanel.add(keywordField, c);
 
 			JTextField keywordValue = new JTextField();
-			keywordValue.setBorder(BorderFactory.createLineBorder(Color.black));
+			// keywordValue.setBorder(BorderFactory.createLineBorder(Color.black));
 			valueVector.add(keywordValue);
 
 			c.fill = GridBagConstraints.HORIZONTAL;
@@ -854,6 +862,52 @@ public class GuiManager {
 			basePanel.add(keywordValue, c);
 
 			// ////////
+			// ///keyword
+
+			// ////////////yearbegin
+
+			keyVector.add("year_begin");
+
+			JButton yearBeginField = new JButton("year_begin" + ":	");
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			basePanel.add(yearBeginField, c);
+
+			JTextField yearBeginValue = new JTextField();
+			// keywordValue.setBorder(BorderFactory.createLineBorder(Color.black));
+			valueVector.add(yearBeginValue);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			basePanel.add(yearBeginValue, c);
+
+			// ////////
+
+			// ////////////
+
+			// ///yearend
+			keyVector.add("year_end");
+
+			JButton year_endField = new JButton("year_end" + ":	");
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.weightx = 1;
+			basePanel.add(year_endField, c);
+
+			JTextField year_endValue = new JTextField();
+			// keywordValue.setBorder(BorderFactory.createLineBorder(Color.black));
+			valueVector.add(year_endValue);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.weightx = 8;
+			basePanel.add(year_endValue, c);
+
+			// //////
 
 			JButton okButton = new JButton("search	");
 

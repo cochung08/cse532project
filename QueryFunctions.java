@@ -37,7 +37,8 @@ public class QueryFunctions {
 		try {
 			Statement st = DatabaseConnection.conn.createStatement();
 			ResultSet rset = (ResultSet) st
-					.executeQuery("SELECT MAX(ARTICLE_ID) AS max_ FROM article3");
+					.executeQuery("SELECT MAX(ARTICLE_ID) AS max_ FROM "
+							+ DataLoading.articleTable);
 			while (rset.next()) {
 
 				max_ = rset.getInt("max_");
@@ -57,7 +58,7 @@ public class QueryFunctions {
 
 	public static LinkedHashMap<String, String> getFinalRatingData(
 			String article_value) {
-		String searchTable = "ARTICLE3";
+		String searchTable = DataLoading.articleTable;
 		String searchField = "ARTICLE_ID";
 
 		LinkedHashMap<String, String> articleData = QueryFunctions
@@ -112,7 +113,7 @@ public class QueryFunctions {
 
 	public static void updateArticleFinalRate(int article_id, String finalRATE) {
 
-		String tableName = "article3";
+		String tableName = DataLoading.articleTable;
 
 		try {
 
@@ -143,7 +144,7 @@ public class QueryFunctions {
 	public static void updateArticleTable(
 			LinkedHashMap<String, String> updateMap) {
 
-		String tableName = "article3";
+		String tableName = DataLoading.articleTable;
 
 		try {
 
@@ -324,7 +325,7 @@ public class QueryFunctions {
 	public static ArrayList<dataCollection> searchJoinTable(
 			LinkedHashMap<String, String> Map) {
 
-		String tableName = "article3";
+		String tableName = DataLoading.articleTable;
 		ArrayList<String> matchedArtcileIdList = new ArrayList<String>();
 
 		try {
@@ -339,7 +340,10 @@ public class QueryFunctions {
 				fieldInArticleTable.add(md.getColumnLabel(i));
 			}
 
-			String joinStr = "ARTICLE3 JOIN AUTHOR ON ARTICLE3.ARTICLE_ID= AUTHOR.ARTICLE_ID JOIN KEYWORD ON KEYWORD.ARTICLE_ID = AUTHOR.ARTICLE_ID";
+			String joinStr = DataLoading.articleTable
+					+ " LEFT JOIN "+DataLoading.authorTable+" ON "
+					+ DataLoading.articleTable
+					+ ".ARTICLE_ID= "+DataLoading.authorTable+".ARTICLE_ID LEFT JOIN "+DataLoading.keywordTable+" ON "+DataLoading.keywordTable+".ARTICLE_ID = "+DataLoading.authorTable+".ARTICLE_ID";
 
 			String search_article_query = "SELECT * from " + joinStr
 					+ " where ";
@@ -350,12 +354,20 @@ public class QueryFunctions {
 				String value = Map.get(key);
 				// System.out.println(value);
 				if (isWhitespace(value) == false) {
-					tmp2 = tmp2 + "LOWER(" + key + ")" + " like LOWER('%"
-							+ value + "%') or ";
+
+					if (key.equalsIgnoreCase("year_begin")) {
+						tmp2 = tmp2 + "year" + " >= " + value + " and ";
+					} else if (key.equalsIgnoreCase("year_end")) {
+
+						tmp2 = tmp2 + "year" + " <= " + value + " and ";
+					} else {
+						tmp2 = tmp2 + "LOWER(" + key + ")" + " like LOWER('%"
+								+ value + "%') and ";
+					}
 				}
 			}
 			if (tmp2 != null)
-				tmp2 = tmp2.substring(0, tmp2.length() - 3);
+				tmp2 = tmp2.substring(0, tmp2.length() - 4);
 
 			search_article_query = search_article_query + tmp2;
 			System.out.println(search_article_query);
@@ -406,7 +418,8 @@ public class QueryFunctions {
 							article_id_value);
 
 			LinkedHashMap<String, String> articleData = QueryFunctions
-					.searchArticle("article3", article_id_key, article_id_value);
+					.searchArticle(DataLoading.articleTable, article_id_key,
+							article_id_value);
 
 			String authorTable = "AUTHOR";
 
