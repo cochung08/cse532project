@@ -90,26 +90,7 @@ public class GuiManager {
 
 				dataLoadingGui();
 
-				// JFileChooser chooser = new JFileChooser("data_files");
-				// chooser.setMultiSelectionEnabled(true);
-				// int option = chooser.showOpenDialog(baseContainer);
-				// if (option == JFileChooser.APPROVE_OPTION) {
-				// File[] sf = chooser.getSelectedFiles();
-				//
-				// for (int i = 0; i < sf.length; i++) {
-				//
-				// String path = sf[i].getAbsolutePath();
-				// // System.out.println(path);
-				//
-				// if (path.contains(PUDMED)) {
-				// DataLoading.loadDataFromPudmed(path);
-				//
-				// } else if (path.contains(COCHRANE)) {
-				//
-				// DataLoading.loadDataFromCochrane(path);
-				// }
-				// }
-				// }
+
 			}
 		});
 
@@ -192,6 +173,16 @@ public class GuiManager {
 		});
 
 		baseContainer.add(finalRatingButton, c);
+		
+		JButton removeButton = new JButton("Remove_Duplicate");
+		removeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+
+					QueryFunctions.removeDuplicate();
+			}
+		});
+
+		baseContainer.add(removeButton, c);
 
 		mainFrame.add(baseContainer);
 		mainFrame.setSize(1000, 500);
@@ -228,13 +219,17 @@ public class GuiManager {
 	}
 
 	public static void dataLoadingGui() {
+		
+		
+		
+		
 		JFrame mainFrame = new JFrame();
-		final JPanel baseContainer = new JPanel();
-		baseContainer.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 1;
-		c.weightx = 8;
+//		final JPanel baseContainer = new JPanel();
+//		baseContainer.setLayout(new GridBagLayout());
+//		GridBagConstraints c = new GridBagConstraints();
+//		c.fill = GridBagConstraints.HORIZONTAL;
+//		c.gridx = 1;
+//		c.weightx = 8;
 
 		final String COCHRANE = "cochrane";
 		final String PUBMED = "pubmed";
@@ -245,6 +240,90 @@ public class GuiManager {
 		JComboBox dbListItem = new JComboBox(dbList);
 		dbListItem.setSelectedIndex(0);
 
+		
+
+//		baseContainer.add(dbListItem, c);
+//
+//		mainFrame.add(baseContainer);
+//		mainFrame.setSize(1000, 500);
+//		mainFrame.setVisible(true);
+		
+		
+		
+		
+		
+		final JPanel baseContainer = new JPanel();
+		baseContainer.setLayout(new GridLayout(6, 1, 5, 5));
+
+		baseContainer.setLayout(new GridBagLayout());
+
+		Border softBevelBorder = new SoftBevelBorder(BevelBorder.RAISED,
+				Color.RED, Color.RED.darker(), Color.PINK,
+				Color.PINK.brighter());
+
+		
+
+				baseContainer.setVisible(false);
+				
+
+	
+
+
+		JTextArea textArea = new JTextArea(20, 40);
+		textArea.setText("1234");
+		textArea.setEditable(false);
+		// textArea.setEnabled(false);
+		textArea.setLineWrap(true);
+
+		Font f = textArea.getFont();
+		Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 2);
+
+
+		JScrollPane abstractScrollPane = new JScrollPane(textArea);
+		textArea.setEditable(true);
+
+		abstractScrollPane
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+
+		GridBagConstraints gbc = new GridBagConstraints();
+
+		JButton jtitle = new JButton("title");
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = 1;
+
+
+
+		gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(dbListItem, gbc);
+
+	
+
+		JTextArea txtAreaAddress = new JTextArea(10, 20);
+		JScrollPane pane = new JScrollPane(txtAreaAddress);
+		gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.NORTH;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridwidth = 3;
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(5, 0, 0, 10);
+		gbc.weightx = 1;
+		baseContainer.add(abstractScrollPane, gbc);
+
+		
+		
+
+		
 		dbListItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JComboBox cb = (JComboBox) arg0.getSource();
@@ -259,12 +338,31 @@ public class GuiManager {
 
 			}
 		});
+		
+		
+	
 
-		baseContainer.add(dbListItem, c);
-
+		baseContainer.setSize(1500, 700);
+		baseContainer.setVisible(true); //
+		
+		
 		mainFrame.add(baseContainer);
 		mainFrame.setSize(1000, 500);
 		mainFrame.setVisible(true);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
 
 		//
 

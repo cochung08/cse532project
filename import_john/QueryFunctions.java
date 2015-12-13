@@ -1,4 +1,5 @@
 package import_john;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -68,14 +69,14 @@ public class QueryFunctions {
 		if (articleData == null) {
 			return null;
 		}
-		String searchTable3 = "KEYWORD";
+		String searchTable3 = DataLoading.keywordTable;
 		String searchField3 = "ARTICLE_ID";
 
 		ListMultimap<String, String> keywordData = QueryFunctions
 				.searchAuthorOrKeyword(searchTable3, searchField3,
 						article_value);
 
-		String searchTable2 = "AUTHOR";
+		String searchTable2 = DataLoading.authorTable;
 		String searchField2 = "ARTICLE_ID";
 
 		ListMultimap<String, String> authorData = QueryFunctions
@@ -364,6 +365,10 @@ public class QueryFunctions {
 					} else if (key.equalsIgnoreCase("year_end")) {
 
 						tmp2 = tmp2 + "year" + " <= " + value + " and ";
+					} else if (key.equalsIgnoreCase("ARTICLE_ID")) {
+						tmp2 = tmp2 + DataLoading.articleTable + ".ARTICLE_ID"
+								+ " = " + value + " and ";
+
 					} else {
 						tmp2 = tmp2 + "LOWER(" + key + ")" + " like LOWER('%"
 								+ value + "%') and ";
@@ -443,8 +448,8 @@ public class QueryFunctions {
 		return dataCollectionArray;
 	}
 
-	static ArrayList<Integer>  ifDuplicate(String title, String year, String issue,
-			String author) {
+	static ArrayList<dataCollection> ifDuplicate(String title, String year,
+			String issue, String author) {
 
 		LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
 		updateMap.put("TITLE", title);
@@ -459,58 +464,38 @@ public class QueryFunctions {
 
 		ArrayList<dataCollection> dataResultset2 = searchJoinTable(updateMap2);
 
-		
-		
-		
-		
-		if (dataResultset.size() > 0) {
-			System.out.println(1);
-			ArrayList<Integer> duplicatedIdList = new ArrayList<Integer>();
-			for(int i=0;i<dataResultset.size();i++)
-			{
-				String dupId = dataResultset.get(0).articleMap.get("ARTICLE_ID");
-				duplicatedIdList.add(Integer.parseInt(dupId));
-				System.out.println(dupId);
-			}
-			
-			return duplicatedIdList;
-		} else {
-			if (dataResultset2.size() > 0) {
-				System.out.println(2);
-				ArrayList<Integer> duplicatedIdList = new ArrayList<Integer>();
-				for(int i=0;i<dataResultset.size();i++)
-				{
-					String dupId = dataResultset2.get(0).articleMap.get("ARTICLE_ID_");
-					duplicatedIdList.add(Integer.parseInt(dupId));
-					System.out.println(dupId);
-				}
-				return duplicatedIdList;
-			} else
-				return null;
+		if (dataResultset.size() > 1) {
+			return dataResultset;
+		} else if (dataResultset2.size() > 1) {
+			return dataResultset2;
+		} else
+			return null;
 
-			// for (int j = 0; j < dataResultset.size(); j++) {
-			// String title_ = dataResultset.get(j).articleMap.get("TITLE");
-			//
-			// System.out.println(title_);
-			// // String issue_ = dataResultset.get(j).articleMap.get("ISSUE");
-			// // String year_ = dataResultset.get(j).articleMap.get("YEAR");
-			// // String author = dataResultset.get(j).articleMap.get("YEAR");
-			//
-			// // int counter = 0;
-			// //
-			// // if (title.equals(title_))
-			// // counter++;
-			// //
-			// // if (issue.equals(issue_))
-			// // counter++;
-			// //
-			// // if (year.equals(year_))
-			// // counter++;
-			// //
-			// // if (counter >= 2)
-			// // return true;
-			// }
-		}
+		// if (dataResultset.size() > 0) {
+		// System.out.println(1);
+		// ArrayList<String> duplicatedIdList = new ArrayList<String>();
+		// for (int i = 0; i < dataResultset.size(); i++) {
+		// String dupId = dataResultset.get(0).articleMap
+		// .get("ARTICLE_ID");
+		// duplicatedIdList.add(dupId);
+		// System.out.println(dupId);
+		// }
+		//
+		// return duplicatedIdList;
+		// } else {
+		// if (dataResultset2.size() > 0) {
+		// System.out.println(2);
+		// ArrayList<String> duplicatedIdList = new ArrayList<String>();
+		// for (int i = 0; i < dataResultset.size(); i++) {
+		// String dupId = dataResultset2.get(0).articleMap
+		// .get("ARTICLE_ID_");
+		// duplicatedIdList.add(dupId);
+		// System.out.println(dupId);
+		// }
+		// return duplicatedIdList;
+		// } else
+		// return null;
+		// }
 
 	}
 
@@ -537,23 +522,120 @@ public class QueryFunctions {
 				String value = articleMap.get(key);
 				key = Strings.padEnd(key, 15, ' ');
 
-				// System.out.println("size:" + key.length());
-				// System.out.println(key);
+				String tmp = key + "- " + value;
+				lines.add(tmp);
+			}
+
+			try {
+
+				Path file = Paths
+						.get("data_files\\ExportFiles\\" + id + ".txt");
+				Files.write(file, lines, Charset.forName("UTF-8"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+	}
+
+	static void exportDuplicate(ArrayList<dataCollection> dataCollectionArray) {
+
+		String id = dataCollectionArray.get(0).articleMap.get("ARTICLE_ID");
+
+		List<String> lines = new ArrayList<String>();
+
+		for (dataCollection data : dataCollectionArray) {
+
+			LinkedHashMap<String, String> articleMap = data.articleMap;
+			List<String> keywordMap = data.keywordMap;
+			List<String> authorMap = data.authorMap;
+
+			articleMap.put("KEY", keywordMap.toString());
+			articleMap.put("AUTHOR", authorMap.toString());
+
+			String strs = "";
+			for (String key : articleMap.keySet()) {
+				String value = articleMap.get(key);
+				key = Strings.padEnd(key, 15, ' ');
 
 				String tmp = key + "- " + value;
 				lines.add(tmp);
+			}
 
-				try {
+			lines.add("------------------------------------");
 
-					Path file = Paths.get("data_files\\ExportFiles\\" + id
-							+ ".txt");
-					Files.write(file, lines, Charset.forName("UTF-8"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		}
+
+		try {
+
+			Path file = Paths.get("data_files\\ExportFiles\\" + id + ".txt");
+			Files.write(file, lines, Charset.forName("UTF-8"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	static void removeDuplicate() {
+		ArrayList<String> idList = new ArrayList<String>();
+		try {
+
+			ListMultimap<String, String> multiMap = ArrayListMultimap.create();
+
+			String search_query = "SELECT ARTICLE_ID from "
+					+ DataLoading.articleTable;
+
+			System.out.println(search_query);
+
+			PreparedStatement ps_search = DatabaseConnection.conn
+					.prepareStatement(search_query);
+			ResultSet rs = (ResultSet) ps_search.executeQuery();
+			DatabaseConnection.conn.commit();
+
+			while (rs.next()) {
+
+				String value = rs.getString(1);
+				idList.add(value);
+				// System.out.println("sssqqq" + value);
 
 			}
+			rs.close();
+			ps_search.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		ArrayList<dataCollection> dataCollectionArray = QueryFunctions
+				.getResultById(idList);
+
+		System.out.println("size: " + dataCollectionArray.size());
+
+		// ifDuplicate
+		List<String> lines = new ArrayList<String>();
+		for (dataCollection data : dataCollectionArray) {
+
+			LinkedHashMap<String, String> articleMap = data.articleMap;
+			List<String> keywordMap = data.keywordMap;
+			List<String> authorMap = data.authorMap;
+
+			articleMap.put("KEY", keywordMap.toString());
+			articleMap.put("AUTHOR", authorMap.get(0));
+
+			String title = articleMap.get("TITLE");
+			String year = articleMap.get("YEAR");
+			String issue = articleMap.get("ISSUE");
+			String author = articleMap.get("AUTHOR");
+
+			ArrayList<dataCollection> dupList = QueryFunctions.ifDuplicate(
+					title, year, issue, author);
+
+			// System.out.println("dupIdList::" + dupIdList);
+
+			exportDuplicate(dupList);
 
 		}
 

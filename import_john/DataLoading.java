@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Vector;
 
 public class DataLoading {
@@ -136,14 +137,14 @@ public class DataLoading {
 			System.out.println("year:" + year);
 			System.out.println("issue:" + issue);
 
-			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
-					year, issue, author);
-			if (dupIdList != null) {
-				System.out.println("duplicate,dont add");
-				return;
-			} else {
-				System.out.println("no duplicate,add");
-			}
+//			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
+//					year, issue, author);
+//			if (dupIdList != null) {
+//				System.out.println("duplicate,dont add");
+//				return;
+//			} else {
+//				System.out.println("no duplicate,add");
+//			}
 
 			for (int w = 1; w < size; w++) {
 
@@ -243,6 +244,8 @@ public class DataLoading {
 			matchTable[14] = "DOI";
 			matchTable[12] = "AB";
 
+			LinkedHashMap<String, String> conflictedRecord1 = new LinkedHashMap<String, String>();
+
 			try {
 
 				File file = new File(pathname);
@@ -258,6 +261,8 @@ public class DataLoading {
 						String[] tmpStr = line.split(":", 2);
 						String key = tmpStr[0];
 						String value = tmpStr[1].substring(1);
+
+						conflictedRecord1.put(key, value);
 
 						if (key.equals("TI"))
 							title = value;
@@ -294,14 +299,48 @@ public class DataLoading {
 				e.printStackTrace();
 			}
 
-			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
-					year, issue, author);
-			if (dupIdList != null) {
-				System.out.println("duplicate,dont add");
-				return;
-			} else {
-				System.out.println("no duplicate,add");
-			}
+//			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
+//					year, issue, author);
+//			if (dupIdList != null) {
+//				System.out.println("duplicate,dont add");
+//
+//				for (int i = 0; i < dupIdList.size(); i++) {
+//					System.out.println("ddddddId" + dupIdList.get(i));
+//
+//					LinkedHashMap<String, String> duplicatedId = new LinkedHashMap<String, String>();
+//					duplicatedId.put("ARTICLE_ID",
+//							String.valueOf(dupIdList.get(i)));
+//					ArrayList<dataCollection> dataList = QueryFunctions
+//							.searchJoinTable(duplicatedId);
+//
+//					for (String key : conflictedRecord1.keySet()) {
+//						System.out.println(conflictedRecord1.get(key));
+//					}
+//
+//					dataCollection data = dataList.get(0);
+//
+//					LinkedHashMap<String, String> articleMap = data.articleMap;
+//					List<String> keywordMap = data.keywordMap;
+//					List<String> authorMap = data.authorMap;
+//
+//					String strs = "";
+//					for (String str : articleMap.keySet()) {
+//						String value = articleMap.get(str);
+//						if (str.equals("ABS") == false && value != null)
+//							strs = strs + str + ": " + articleMap.get(str)
+//									+ ", ";
+//					}
+//
+//					String msg = strs + "//Author: " + authorMap.toString()
+//							+ "//Keyword: " + keywordMap.toString();
+//					System.out.println("msg: " + msg);
+//
+//				}
+//
+//				return;
+//			} else {
+//				System.out.println("no duplicate,add");
+//			}
 
 			for (int w = 1; w < size; w++) {
 
