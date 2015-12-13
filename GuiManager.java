@@ -150,7 +150,7 @@ public class GuiManager {
 
 		finalRatingButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-
+				System.out.println("finalRatingButton");
 				int maxArticleId = QueryFunctions.getMaxArticleId();
 				for (int i = 1; i <= maxArticleId; i++) {
 					boolean result = GuiManager.finalRatingGui(String
@@ -158,6 +158,10 @@ public class GuiManager {
 					if (result == true) {
 						System.out.println("result: " + i);
 						break;
+					}
+					else
+					{
+						System.out.println("final rating not successful");
 					}
 				}
 
@@ -222,9 +226,9 @@ public class GuiManager {
 				String dbName = (String) cb.getSelectedItem();
 				if (dbName.equals(COCHRANE)) {
 					chooseFile(1, baseContainer);
-				} else if (dbName.equals(COCHRANE)) {
+				} else if (dbName.equals(PUBMED)) {
 					chooseFile(2, baseContainer);
-				} else if (dbName.equals(COCHRANE)) {
+				} else if (dbName.equals(PSYCINFO)) {
 					chooseFile(3, baseContainer);
 				}
 
