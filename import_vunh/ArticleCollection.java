@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -103,6 +104,17 @@ public class ArticleCollection {
 		disconnectToDatabase();
 	}
 	
+	public void readSingleTextFile(String _textFilePath, int _autoWriteToDatabase)
+	{
+		connectToDatabase();
+		prepareStatement();
+		
+		articles = new ArrayList<Article>();
+		readTextFile(_textFilePath, _autoWriteToDatabase);
+		
+		disconnectToDatabase();
+	}
+	
 	public void readTextFile(String _textFilePath, int _autoWriteToDatabase)
 	{
 		try (BufferedReader br = new BufferedReader(new FileReader(_textFilePath)))
@@ -136,6 +148,11 @@ public class ArticleCollection {
 					String fieldName = line.substring(0, 2);
 					String fieldValue = line.substring(4);
 					ar.addField(fieldName, fieldValue);
+					
+					if (fieldName.startsWith("TI"))
+					{
+						System.out.println(line);
+					}
 				}
 			}
 			
@@ -162,12 +179,12 @@ public class ArticleCollection {
 	{
 		try
 		{
-			if (debug == 124)
+			if (debug == 2)
 			{
 				int a = 3;
 				int b = a;
 			}
-			//System.out.println(debug);
+			System.out.println(debug);
 			debug++;
 			String[] fieldList = Article.getFieldList();
 			for (int iArt = 0; iArt< articles.size(); iArt++)
@@ -202,6 +219,17 @@ public class ArticleCollection {
 								ps_article.setNull(iField + 1, java.sql.Types.INTEGER);
 							}
 						} break;
+						case "dbclob":
+						{
+							if (fieldVal != null)
+							{
+								ps_article.setString(iField + 1, fieldVal);
+							}
+							else
+							{
+								ps_article.setNull(iField + 1, java.sql.Types.CLOB);
+							}
+						} break;
 					}
 					
 				}
@@ -214,8 +242,14 @@ public class ArticleCollection {
 					
 					// Insert Keyword
 					String[] keywords = art.getKeywords();
+					keywords = getUniqueValues(keywords);
 					for (int iKeyword = 0; iKeyword < keywords.length; iKeyword++)
 					{
+						if (debug == 2 && iKeyword == 6)
+						{
+							int a = 3;
+							int b = a;
+						}
 						
 						ps_keyword.setString(1, keywords[iKeyword]);
 						ps_keyword.setInt(2, idColVar);
@@ -224,6 +258,7 @@ public class ArticleCollection {
 					
 					// Insert author (not implemented yet)
 					String[] authors = art.getAuthors();
+					authors = getUniqueValues(authors);
 					for (int iAu = 0; iAu < authors.length; iAu++)
 					{
 						ps_author.setString(1, "");		// Need to fill to this short form of author later
@@ -325,4 +360,16 @@ public class ArticleCollection {
 		}
 	}
 	
+	private String[] getUniqueValues(String[] str)
+	{
+		Set<String> unique = new HashSet<String>(Arrays.asList(str));
+		String[] res = new String[unique.size()];
+		int i = 0;
+		for (String s : unique)
+		{
+			res[i] = s;
+			i++;
+		}
+		return res;
+	}
 }

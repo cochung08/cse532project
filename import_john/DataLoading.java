@@ -402,9 +402,10 @@ public class DataLoading {
 				DatabaseConnection.databaseName, DatabaseConnection.user,
 				DatabaseConnection.password);
 		File tmp = new File(path);
-		String tmpPath = tmp.getParent();
+		String tmpPath = tmp.getAbsolutePath();
 		System.out.println(tmpPath);
-		ac.readFromTextFiles(tmpPath, 2);
+		//ac.readFromTextFiles(tmpPath, 2);
+		ac.readSingleTextFile(tmpPath, 2);
 	}
 
 }
