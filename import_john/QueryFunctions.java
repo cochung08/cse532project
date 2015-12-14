@@ -196,6 +196,9 @@ public class QueryFunctions {
 			int j = 1;
 			for (String key : updateMap.keySet()) {
 				if (!key.equalsIgnoreCase("ARTICLE_ID")) {
+
+					System.out.println(j + "_" + updateMap.get(key));
+
 					ps_update.setString(j, updateMap.get(key));
 					j++;
 				}

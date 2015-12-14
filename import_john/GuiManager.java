@@ -179,7 +179,7 @@ public class GuiManager {
 
 		baseContainer.add(finalRatingButton, c);
 
-		JButton removeButton = new JButton("Remove_Duplicate");
+		JButton removeButton = new JButton("Remove and Combine Duplicate");
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 
@@ -767,6 +767,7 @@ public class GuiManager {
 
 				QueryFunctions.updateArticleTable(updateMap);
 
+				JOptionPane.showMessageDialog(basePanel, "update successfully");
 			}
 		});
 
@@ -789,7 +790,8 @@ public class GuiManager {
 				idList.add(article_id);
 
 				QueryFunctions.exportById(idList);
-
+				JOptionPane.showMessageDialog(basePanel,
+						"Export to folder ExportFiles");
 			}
 		});
 
