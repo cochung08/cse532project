@@ -90,7 +90,6 @@ public class GuiManager {
 
 				dataLoadingGui();
 
-
 			}
 		});
 
@@ -173,12 +172,12 @@ public class GuiManager {
 		});
 
 		baseContainer.add(finalRatingButton, c);
-		
+
 		JButton removeButton = new JButton("Remove_Duplicate");
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 
-					QueryFunctions.removeDuplicate();
+				QueryFunctions.removeDuplicate();
 			}
 		});
 
@@ -219,17 +218,14 @@ public class GuiManager {
 	}
 
 	public static void dataLoadingGui() {
-		
-		
-		
-		
+
 		JFrame mainFrame = new JFrame();
-//		final JPanel baseContainer = new JPanel();
-//		baseContainer.setLayout(new GridBagLayout());
-//		GridBagConstraints c = new GridBagConstraints();
-//		c.fill = GridBagConstraints.HORIZONTAL;
-//		c.gridx = 1;
-//		c.weightx = 8;
+		// final JPanel baseContainer = new JPanel();
+		// baseContainer.setLayout(new GridBagLayout());
+		// GridBagConstraints c = new GridBagConstraints();
+		// c.fill = GridBagConstraints.HORIZONTAL;
+		// c.gridx = 1;
+		// c.weightx = 8;
 
 		final String COCHRANE = "cochrane";
 		final String PUBMED = "pubmed";
@@ -240,18 +236,12 @@ public class GuiManager {
 		JComboBox dbListItem = new JComboBox(dbList);
 		dbListItem.setSelectedIndex(0);
 
-		
+		// baseContainer.add(dbListItem, c);
+		//
+		// mainFrame.add(baseContainer);
+		// mainFrame.setSize(1000, 500);
+		// mainFrame.setVisible(true);
 
-//		baseContainer.add(dbListItem, c);
-//
-//		mainFrame.add(baseContainer);
-//		mainFrame.setSize(1000, 500);
-//		mainFrame.setVisible(true);
-		
-		
-		
-		
-		
 		final JPanel baseContainer = new JPanel();
 		baseContainer.setLayout(new GridLayout(6, 1, 5, 5));
 
@@ -261,13 +251,7 @@ public class GuiManager {
 				Color.RED, Color.RED.darker(), Color.PINK,
 				Color.PINK.brighter());
 
-		
-
-				baseContainer.setVisible(false);
-				
-
-	
-
+		baseContainer.setVisible(false);
 
 		JTextArea textArea = new JTextArea(20, 40);
 		textArea.setText("1234");
@@ -278,13 +262,11 @@ public class GuiManager {
 		Font f = textArea.getFont();
 		Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 2);
 
-
 		JScrollPane abstractScrollPane = new JScrollPane(textArea);
 		textArea.setEditable(true);
 
 		abstractScrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
 
 		GridBagConstraints gbc = new GridBagConstraints();
 
@@ -295,8 +277,6 @@ public class GuiManager {
 		gbc.insets = new Insets(0, 10, 0, 0);
 		gbc.weightx = 1;
 
-
-
 		gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth = 3;
@@ -305,8 +285,6 @@ public class GuiManager {
 		gbc.insets = new Insets(5, 0, 0, 10);
 		gbc.weightx = 1;
 		baseContainer.add(dbListItem, gbc);
-
-	
 
 		JTextArea txtAreaAddress = new JTextArea(10, 20);
 		JScrollPane pane = new JScrollPane(txtAreaAddress);
@@ -320,10 +298,6 @@ public class GuiManager {
 		gbc.weightx = 1;
 		baseContainer.add(abstractScrollPane, gbc);
 
-		
-		
-
-		
 		dbListItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JComboBox cb = (JComboBox) arg0.getSource();
@@ -338,31 +312,13 @@ public class GuiManager {
 
 			}
 		});
-		
-		
-	
 
 		baseContainer.setSize(1500, 700);
 		baseContainer.setVisible(true); //
-		
-		
+
 		mainFrame.add(baseContainer);
 		mainFrame.setSize(1000, 500);
 		mainFrame.setVisible(true);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
 
 		//
 

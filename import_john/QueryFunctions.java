@@ -542,11 +542,13 @@ public class QueryFunctions {
 
 	static void exportDuplicate(ArrayList<dataCollection> dataCollectionArray) {
 
-		String id = dataCollectionArray.get(0).articleMap.get("ARTICLE_ID");
+		String id = "";
 
 		List<String> lines = new ArrayList<String>();
 
 		for (dataCollection data : dataCollectionArray) {
+
+			id = id + "_" + data.articleMap.get("ARTICLE_ID");
 
 			LinkedHashMap<String, String> articleMap = data.articleMap;
 			List<String> keywordMap = data.keywordMap;
@@ -570,7 +572,7 @@ public class QueryFunctions {
 
 		try {
 
-			Path file = Paths.get("data_files\\ExportFiles\\" + id + ".txt");
+			Path file = Paths.get("data_files\\ExportDuplicate\\" + id + ".txt");
 			Files.write(file, lines, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -615,16 +617,21 @@ public class QueryFunctions {
 		System.out.println("size: " + dataCollectionArray.size());
 
 		// ifDuplicate
-		List<String> lines = new ArrayList<String>();
-		for (dataCollection data : dataCollectionArray) {
+
+		for (int k = 0; k < dataCollectionArray.size(); k++) {
+			dataCollection data = dataCollectionArray.get(k);
 
 			LinkedHashMap<String, String> articleMap = data.articleMap;
 			List<String> keywordMap = data.keywordMap;
 			List<String> authorMap = data.authorMap;
 
 			articleMap.put("KEY", keywordMap.toString());
-			articleMap.put("AUTHOR", authorMap.get(0));
 
+			if (authorMap != null && authorMap.size() != 0)
+				articleMap.put("AUTHOR", authorMap.get(0));
+
+			String artilce_id = articleMap.get("ARTICLE_ID");
+			System.out.println("artilce_id" + artilce_id);
 			String title = articleMap.get("TITLE");
 			String year = articleMap.get("YEAR");
 			String issue = articleMap.get("ISSUE");
@@ -633,10 +640,62 @@ public class QueryFunctions {
 			ArrayList<dataCollection> dupList = QueryFunctions.ifDuplicate(
 					title, year, issue, author);
 
-			// System.out.println("dupIdList::" + dupIdList);
+			if (dupList != null && dupList.size() > 1) {
+				for (dataCollection tmp : dupList) {
 
-			exportDuplicate(dupList);
+					String id = tmp.articleMap.get("ARTICLE_ID");
+					if (id.equals(artilce_id) == false) {
+						deleteByArticleId(id);
 
+						for (int p = 0; p < dataCollectionArray.size(); p++) {
+							dataCollection tmp2 = dataCollectionArray.get(p);
+
+							if (tmp2.articleMap.get("ARTICLE_ID").equals(id)) {
+								System.out.println("aassw:" + id);
+								dataCollectionArray.remove(p);
+							}
+						}
+
+					}
+				}
+
+				exportDuplicate(dupList);
+			}
+		}
+	}
+
+	static void deleteByArticleId(String id) {
+
+		String query1 = "DELETE FROM " + DataLoading.authorTable
+				+ " WHERE ARTICLE_ID = " + id;
+		String query2 = "DELETE FROM " + DataLoading.keywordTable
+				+ " WHERE ARTICLE_ID = " + id;
+		String query3 = "DELETE FROM " + DataLoading.articleTable
+				+ " WHERE ARTICLE_ID = " + id;
+
+		System.out.println(query1);
+		// System.out.println(query2);
+		// System.out.println(query3);
+
+		Statement ps_delete1;
+		Statement ps_delete2;
+		Statement ps_delete3;
+		try {
+
+			ps_delete1 = DatabaseConnection.conn.createStatement();
+			ps_delete1.executeUpdate(query1);
+			ps_delete2 = DatabaseConnection.conn.createStatement();
+			ps_delete2.executeUpdate(query2);
+			ps_delete3 = DatabaseConnection.conn.createStatement();
+			ps_delete3.executeUpdate(query3);
+			// ps_delete2 = DatabaseConnection.conn.prepareStatement(query2);
+			// ResultSet rs2 = (ResultSet) ps_delete1.executeQuery();
+			// ps_delete3 = DatabaseConnection.conn.prepareStatement(query3);
+			// ResultSet rs3 = (ResultSet) ps_delete1.executeQuery();
+			DatabaseConnection.conn.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
