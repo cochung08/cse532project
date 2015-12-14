@@ -580,7 +580,7 @@ public class QueryFunctions {
 			List<String> keywordMap = data.keywordMap;
 			List<String> authorMap = data.authorMap;
 
-			articleMap.put("KEY", keywordMap.toString());
+			articleMap.put("KEYWORD", keywordMap.toString());
 			articleMap.put("AUTHOR", authorMap.toString());
 
 			String strs = "";
@@ -652,7 +652,7 @@ public class QueryFunctions {
 			List<String> keywordMap = data.keywordMap;
 			List<String> authorMap = data.authorMap;
 
-			articleMap.put("KEY", keywordMap.toString());
+			articleMap.put("KEYWORD", keywordMap.toString());
 
 			if (authorMap != null && authorMap.size() != 0)
 				articleMap.put("AUTHOR", authorMap.get(0));
@@ -673,23 +673,36 @@ public class QueryFunctions {
 					String id = tmp.articleMap.get("ARTICLE_ID");
 					if (id.equals(artilce_id) == false) {
 
-//						LinkedHashMap<String, String> articleMap2 = tmp.articleMap;
+						LinkedHashMap<String, String> articleMap2 = tmp.articleMap;
+						
+						System.out.println("-------------");
+
+						for (String key1 : articleMap.keySet()) {
+							String value1 = articleMap.get(key1);
+							String value2 = articleMap2.get(key1);
+							if (value1 != null && value2 != null
+									&& !key1.equals("ARTICLE_ID")
+									&& !value1.equals(value2)) {
+								value1 = value1 + "___" + value2;
+
+								// articleMap.remove(key1);
+								articleMap.put(key1, value1);
+								// back
+							}
+						}
+						
+						articleMap.remove("AUTHOR");
+						articleMap.remove("KEYWORD");
+
 //						for (String key1 : articleMap.keySet()) {
 //							String value1 = articleMap.get(key1);
-//							String value2 = articleMap2.get(key1);
-//							if (value1 != null && value2 != null
-//									&& value1 != value2) {
-//								value1 = value1 + "___"+value2;
-//								articleMap.remove(key1);
-//								articleMap.put(key1, value1);
-//								// back
-//
-//								QueryFunctions.updateArticleTable(articleMap);
-//
-//							}
+//							System.out.println("key: " + key1);
+//							System.out.println("value:" + value1);
 //
 //						}
 
+						
+						QueryFunctions.updateArticleTable(articleMap);
 						deleteByArticleId(id);
 
 						for (int p = 0; p < dataCollectionArray.size(); p++) {
