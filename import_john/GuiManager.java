@@ -157,7 +157,12 @@ public class GuiManager {
 			public void actionPerformed(ActionEvent ae) {
 				System.out.println("finalRatingButton");
 				int maxArticleId = QueryFunctions.getMaxArticleId();
-				for (int i = 1; i <= maxArticleId; i++) {
+
+				int minArticleId = QueryFunctions.getMinArticleId();
+
+				System.out.println("minArticleId:" + minArticleId);
+
+				for (int i = minArticleId; i <= maxArticleId; i++) {
 					boolean result = GuiManager.finalRatingGui(String
 							.valueOf(i));
 					if (result == true) {

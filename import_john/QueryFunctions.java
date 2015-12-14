@@ -58,6 +58,29 @@ public class QueryFunctions {
 
 	}
 
+	public static int getMinArticleId() {
+		int min_ = 0;
+		try {
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st
+					.executeQuery("SELECT MIN(ARTICLE_ID) AS min_ FROM "
+							+ DataLoading.articleTable);
+			while (rset.next()) {
+
+				min_ = rset.getInt(1);
+
+			}
+			rset.close();
+
+			return min_;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 1;
+	}
+
 	public static LinkedHashMap<String, String> getFinalRatingData(
 			String article_value) {
 		String searchTable = DataLoading.articleTable;
@@ -572,7 +595,8 @@ public class QueryFunctions {
 
 		try {
 
-			Path file = Paths.get("data_files\\ExportDuplicate\\" + id + ".txt");
+			Path file = Paths
+					.get("data_files\\ExportDuplicate\\" + id + ".txt");
 			Files.write(file, lines, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -697,6 +721,10 @@ public class QueryFunctions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+	}
+
+	static void getMinId() {
 
 	}
 }
