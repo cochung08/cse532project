@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -44,6 +45,7 @@ public class DetailInfoPanel extends JDialog
 	JTextArea txt_title;
 	JTextArea txt_au;
 	JTextArea txt_jnl;
+	JPanel panel;
 	JLabel lb_abs;
 	JLabel lb_title;
 	JLabel lb_au;
@@ -63,7 +65,8 @@ public class DetailInfoPanel extends JDialog
 		this.setLayout(null);
 		this.parent = _parent;
 		this.font = _font;
-		this.getContentPane().setBackground(new Color(190, 190, 190));
+		this.setBackground(new Color(220, 220, 220));
+		this.getContentPane().setBackground(new Color(220, 220, 220));
 		initUI();
 		this.setLocationRelativeTo(parent);
 		this.setLocation(_pos);
@@ -146,6 +149,15 @@ public class DetailInfoPanel extends JDialog
 		});
 		this.setUndecorated(true);
 		
+		// The Panel
+		panel = new JPanel();
+		panel.setSize(new Dimension(this.getWidth()-1, this.getHeight()-1));
+		panel.setLocation(1, 1);
+		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		panel.setLayout(null);
+		panel.setBackground(new Color(220, 220, 220));
+		this.getContentPane().add(panel);
+		
 		// Text fields and text area
 		txt_abs = new JTextArea();
 		txt_abs.addKeyListener(kenter);
@@ -155,7 +167,9 @@ public class DetailInfoPanel extends JDialog
 		scr_abs = new JScrollPane(txt_abs);
 		scr_abs.setSize(new Dimension(text_width, ta_height));
 		scr_abs.setLocation(new Point(viewBeginX2, viewBeginY));
-		this.getContentPane().add(scr_abs);
+		scr_abs.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//this.getContentPane().add(scr_abs);
+		panel.add(scr_abs);
 		
 		txt_title = new JTextArea();
 		txt_title.setSize(new Dimension(text_width, tf_height));
@@ -163,7 +177,9 @@ public class DetailInfoPanel extends JDialog
 		txt_title.setLineWrap(true);
 		txt_title.addKeyListener(kenter);
 		txt_title.setFont(font);
-		this.getContentPane().add(txt_title);
+		txt_title.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//this.getContentPane().add(txt_title);
+		panel.add(txt_title);
 		
 		txt_au = new JTextArea();
 		txt_au.setSize(new Dimension(text_width, tf_height));
@@ -171,7 +187,9 @@ public class DetailInfoPanel extends JDialog
 		txt_au.setLineWrap(true);
 		txt_au.addKeyListener(kenter);
 		txt_au.setFont(font);
-		this.getContentPane().add(txt_au);
+		txt_au.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//this.getContentPane().add(txt_au);
+		panel.add(txt_au);
 		
 		txt_jnl = new JTextArea();
 		txt_jnl.setSize(new Dimension(text_width, tf_height));
@@ -179,7 +197,9 @@ public class DetailInfoPanel extends JDialog
 		txt_jnl.setLineWrap(true);
 		txt_jnl.addKeyListener(kenter);
 		txt_jnl.setFont(font);
-		this.getContentPane().add(txt_jnl);
+		txt_jnl.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		//this.getContentPane().add(txt_jnl);
+		panel.add(txt_jnl);
 		
 		
 		
@@ -189,25 +209,29 @@ public class DetailInfoPanel extends JDialog
 		lb_abs.setText("Abstract");
 		lb_abs.setSize(new Dimension(label_width, label_height));
 		lb_abs.setLocation(viewBeginX1, viewBeginY);
-		this.getContentPane().add(lb_abs);
+		//this.getContentPane().add(lb_abs);
+		panel.add(lb_abs);
 		
 		lb_title = new JLabel();
 		lb_title.setText("Title");
 		lb_title.setSize(new Dimension(label_width, label_height));
 		lb_title.setLocation(viewBeginX1, scr_abs.getY() + scr_abs.getHeight() + row_gap);
-		this.getContentPane().add(lb_title);
+		//this.getContentPane().add(lb_title);
+		panel.add(lb_title);
 		
 		lb_au = new JLabel();
 		lb_au.setText("Author");
 		lb_au.setSize(new Dimension(label_width, label_height));
 		lb_au.setLocation(viewBeginX1, txt_title.getY() + txt_title.getHeight() + row_gap);
-		this.getContentPane().add(lb_au);
+		//this.getContentPane().add(lb_au);
+		panel.add(lb_au);
 		
 		lb_jnl = new JLabel();
 		lb_jnl.setText("Journal");
 		lb_jnl.setSize(new Dimension(label_width, label_height));
 		lb_jnl.setLocation(viewBeginX1, txt_au.getY() + txt_au.getHeight() + row_gap);
-		this.getContentPane().add(lb_jnl);
+		//this.getContentPane().add(lb_jnl);
+		panel.add(lb_jnl);
 		
 		
 	}
