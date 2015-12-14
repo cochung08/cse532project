@@ -40,6 +40,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -183,6 +184,9 @@ public class GuiManager {
 			public void actionPerformed(ActionEvent ae) {
 
 				QueryFunctions.removeDuplicate();
+				JOptionPane
+						.showMessageDialog(baseContainer,
+								"duplicate info can be found in folder ExportDuplicate");
 			}
 		});
 
@@ -259,7 +263,7 @@ public class GuiManager {
 		baseContainer.setVisible(false);
 
 		JTextArea textArea = new JTextArea(20, 40);
-		textArea.setText("1234");
+		// textArea.setText("1234");
 		textArea.setEditable(false);
 		// textArea.setEnabled(false);
 		textArea.setLineWrap(true);
@@ -1117,6 +1121,25 @@ public class GuiManager {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void hintGui() {
+
+		final JFrame parent = new JFrame();
+		JButton button = new JButton();
+
+		button.setText("Click me to show dialog!");
+		parent.add(button);
+		parent.pack();
+		parent.setVisible(true);
+
+		button.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				String name = JOptionPane.showInputDialog(parent,
+						"What is your name?", null);
+			}
+		});
 	}
 
 }
