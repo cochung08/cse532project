@@ -608,7 +608,7 @@ public class QueryFunctions {
 
 	}
 
-	static void removeDuplicate() {
+	static void removeAndCombineDuplicate() {
 		ArrayList<String> idList = new ArrayList<String>();
 		try {
 

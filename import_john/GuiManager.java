@@ -183,7 +183,7 @@ public class GuiManager {
 		removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 
-				QueryFunctions.removeDuplicate();
+				QueryFunctions.removeAndCombineDuplicate();
 				JOptionPane
 						.showMessageDialog(baseContainer,
 								"duplicate info can be found in folder ExportDuplicate");
@@ -226,7 +226,7 @@ public class GuiManager {
 							.separateFile(path);
 					for (ArrayList<String> tmp : dataArrayArray) {
 						DataLoading.loadDataFromPudmed(tmp);
-						
+
 					}
 
 				} else if (type == 3) {
@@ -375,7 +375,7 @@ public class GuiManager {
 
 				QueryFunctions.exportById(idList);
 				JOptionPane.showMessageDialog(baseContainer, "export complete");
-				
+
 			}
 
 		});
@@ -486,8 +486,8 @@ public class GuiManager {
 				+ ",year: " + year);
 		JPanel4.add(JJournal);
 
-		JLabel JfirstValue = new JLabel("first rate: " + first);
-		JLabel JSecondValue = new JLabel("second rate: " + second);
+		JLabel JfirstValue = new JLabel("first rating: " + first);
+		JLabel JSecondValue = new JLabel("second rating: " + second);
 		final JTextField JFinalValue = new JTextField();
 		PromptSupport.setPrompt("final rate", JFinalValue);
 		JFinalValue.addAncestorListener(new RequestFocusListener());
@@ -1103,15 +1103,15 @@ public class GuiManager {
 					}
 
 					if (QueryFunctions.isWhitespace(str) == false) {
-						LinkedHashMap<String, String> updateMap = new LinkedHashMap<String, String>();
+						LinkedHashMap<String, String> searchMap = new LinkedHashMap<String, String>();
 
 						for (int k = 0; k < keyVectorCopy.size(); k++) {
-							updateMap.put(keyVectorCopy.get(k), valueVectorCopy
+							searchMap.put(keyVectorCopy.get(k), valueVectorCopy
 									.get(k).getText());
 
 						}
 						ArrayList<dataCollection> dataResultset = QueryFunctions
-								.searchJoinTable(updateMap);
+								.searchJoinTable(searchMap);
 
 						System.out.println("searchAllTable.size()"
 								+ dataResultset.size());
