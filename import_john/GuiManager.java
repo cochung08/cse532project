@@ -164,8 +164,8 @@ public class GuiManager {
 				System.out.println("minArticleId:" + minArticleId);
 
 				for (int i = minArticleId; i <= maxArticleId; i++) {
-					boolean result = GuiManager.finalRatingGui(String
-							.valueOf(i));
+					boolean result = GuiManager.finalRatingGui(
+							String.valueOf(i), maxArticleId);
 					if (result == true) {
 						System.out.println("result: " + i);
 						break;
@@ -437,8 +437,8 @@ public class GuiManager {
 
 	}
 
-	public static boolean finalRatingGui(String article_id) {
-
+	public static boolean finalRatingGui(String article_id, int maxArticleId_) {
+		final int maxArticleId = maxArticleId_;
 		LinkedHashMap<String, String> finalRatingData = QueryFunctions
 				.getFinalRatingData(article_id);
 
@@ -500,9 +500,10 @@ public class GuiManager {
 				String text = JFinalValue.getText();
 				System.out.printf(text);
 				QueryFunctions.updateArticleFinalRate(index, text);
-				int maxArticleId = QueryFunctions.getMaxArticleId();
+				// int maxArticleId = QueryFunctions.getMaxArticleId();
 				for (int i = index + 1; i <= maxArticleId; i++) {
-					boolean result = finalRatingGui(String.valueOf(i));
+					boolean result = finalRatingGui(String.valueOf(i),
+							maxArticleId);
 					if (result == true) {
 						break;
 					}
