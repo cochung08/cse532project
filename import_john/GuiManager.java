@@ -192,6 +192,26 @@ public class GuiManager {
 
 		baseContainer.add(removeButton, c);
 
+		// exportall
+
+		JButton ExportButton = new JButton("ExportAll");
+
+		ExportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				System.out.println("ExportButton");
+
+				QueryFunctions.exportAll();
+
+				JOptionPane.showMessageDialog(baseContainer,
+						"exportAll complete");
+
+			}
+		});
+
+		baseContainer.add(ExportButton, c);
+
+		// export
+
 		mainFrame.add(baseContainer);
 		mainFrame.setSize(1000, 500);
 		mainFrame.setVisible(true);

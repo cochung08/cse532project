@@ -102,7 +102,7 @@ public class RatingScreen extends JFrame {
 		this.setTitle("Rating Screen");
 		initMenu();
 		initUI();
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter()
 			{
 				public void windowClosing(WindowEvent e)

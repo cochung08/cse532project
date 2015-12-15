@@ -674,7 +674,7 @@ public class QueryFunctions {
 					if (id.equals(artilce_id) == false) {
 
 						LinkedHashMap<String, String> articleMap2 = tmp.articleMap;
-						
+
 						System.out.println("-------------");
 
 						for (String key1 : articleMap.keySet()) {
@@ -690,18 +690,17 @@ public class QueryFunctions {
 								// back
 							}
 						}
-						
+
 						articleMap.remove("AUTHOR");
 						articleMap.remove("KEYWORD");
 
-//						for (String key1 : articleMap.keySet()) {
-//							String value1 = articleMap.get(key1);
-//							System.out.println("key: " + key1);
-//							System.out.println("value:" + value1);
-//
-//						}
+						// for (String key1 : articleMap.keySet()) {
+						// String value1 = articleMap.get(key1);
+						// System.out.println("key: " + key1);
+						// System.out.println("value:" + value1);
+						//
+						// }
 
-						
 						QueryFunctions.updateArticleTable(articleMap);
 						deleteByArticleId(id);
 
@@ -757,7 +756,34 @@ public class QueryFunctions {
 
 	}
 
-	static void getMinId() {
+	static void exportAll() {
+
+		try {
+			String search_query = "SELECT * from " + DataLoading.articleTable;
+			PreparedStatement ps_search = DatabaseConnection.conn
+					.prepareStatement(search_query);
+
+			ResultSet rs = (ResultSet) ps_search.executeQuery();
+
+			DatabaseConnection.conn.commit();
+
+			ArrayList<String> idList = new ArrayList<String>();
+			while (rs.next()) {
+				String id = rs.getString(1);
+//				System.out.println("id: " + id);
+				idList.add(id);
+			}
+
+			rs.close();
+			ps_search.close();
+			
+			
+			exportById(idList);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
