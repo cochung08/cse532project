@@ -244,7 +244,7 @@ public class GuiManager {
 		// baseContainer.setLayout(new GridBagLayout());
 		// GridBagConstraints c = new GridBagConstraints();
 		// c.fill = GridBagConstraints.HORIZONTAL;
-		// c.gridx = 1;
+		// c.gridx = 1;/
 		// c.weightx = 8;
 
 		final String COCHRANE = "cochrane";
@@ -374,7 +374,8 @@ public class GuiManager {
 				System.out.println("export111");
 
 				QueryFunctions.exportById(idList);
-
+				JOptionPane.showMessageDialog(baseContainer, "export complete");
+				
 			}
 
 		});
