@@ -429,7 +429,7 @@ public class GuiManager {
 
 			String msg = strs + "//Author: " + authorMap.toString()
 					+ "//Keyword: " + keywordMap.toString();
-			System.out.println("msg: " + msg);
+//			System.out.println("msg: " + msg);
 			JTextField valueField = new JTextField(msg);
 			Font f = valueField.getFont();
 			Font f2 = new Font(f.getFontName(), f.getStyle(), f.getSize() + 3);

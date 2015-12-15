@@ -355,18 +355,8 @@ public class QueryFunctions {
 
 		String tableName = DataLoading.articleTable;
 		ArrayList<String> matchedArtcileIdList = new ArrayList<String>();
-
+		ArrayList<dataCollection> dataCollectionList = new ArrayList<dataCollection>();
 		try {
-			Statement st = DatabaseConnection.conn.createStatement();
-			ResultSet rset = (ResultSet) st.executeQuery("SELECT * FROM "
-					+ tableName);
-			ResultSetMetaData md = rset.getMetaData();
-
-			Vector<String> fieldInArticleTable = new Vector<String>();
-			for (int i = 1; i <= md.getColumnCount(); i++) {
-
-				fieldInArticleTable.add(md.getColumnLabel(i));
-			}
 
 			String joinStr = DataLoading.articleTable + " LEFT JOIN "
 					+ DataLoading.authorTable + " ON "
@@ -412,12 +402,61 @@ public class QueryFunctions {
 
 			ResultSet rs = (ResultSet) search_article.executeQuery();
 
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st.executeQuery(search_article_query);
+			ResultSetMetaData md = rset.getMetaData();
+
+			Vector<String> fieldInArticleTable = new Vector<String>();
+			for (int i = 1; i <= md.getColumnCount(); i++) {
+
+				fieldInArticleTable.add(md.getColumnLabel(i));
+
+			}
+
 			while (rs.next()) {
 
-				String article_id_key = "ARTICLE_ID";
-				String article_id_value = rs.getString(article_id_key);
-				if (matchedArtcileIdList.contains(article_id_value) == false)
-					matchedArtcileIdList.add(article_id_value);
+				LinkedHashMap<String, String> articleData = new LinkedHashMap<String, String>();
+				ArrayList<String> keywordList = new ArrayList<String>();
+				ArrayList<String> authorList = new ArrayList<String>();
+
+				int count = md.getColumnCount();
+				for (int i = 1; i <= count - 2; i++) {
+					String kw = md.getColumnLabel(i);
+					String vl = rs.getString(i);
+					articleData.put(kw, vl);
+					//
+					// System.out.println("kkk:   " + kw);
+					// System.out.println("vvv:   " + vl);
+
+				}
+				keywordList.add(rs.getString(count - 1));
+
+				System.out.println("keywordList:   " + rs.getString(count - 1));
+				authorList.add(rs.getString(count));
+				System.out.println("authorList:   " + rs.getString(count));
+
+				dataCollection data = new dataCollection(articleData,
+						keywordList, authorList);
+
+				boolean ifExist = false;
+				for (dataCollection d : dataCollectionList) {
+					String aid = "ARTICLE_ID";
+					String a = d.articleMap.get(aid);
+					String b = data.articleMap.get(aid);
+					if (a.equals(b) == true) {
+						// data.keywordMap.add(b);
+						// dataCollectionList.remove(d);
+						ifExist = true;
+					}
+
+				}
+
+				if (ifExist == false)
+					dataCollectionList.add(data);
+				// String article_id_key = "ARTICLE_ID";
+				// String article_id_value = rs.getString(article_id_key);
+				// if (matchedArtcileIdList.contains(article_id_value) == false)
+				// matchedArtcileIdList.add(article_id_value);
 			}
 
 			rs.close();
@@ -434,7 +473,8 @@ public class QueryFunctions {
 		// for (int i = 0; i < matchedArtcileIdList.size(); i++)
 		System.out.println("size:" + matchedArtcileIdList.size());
 
-		return getResultById(matchedArtcileIdList);
+		return dataCollectionList;
+		// return getResultById(matchedArtcileIdList);
 
 	}
 
@@ -610,36 +650,91 @@ public class QueryFunctions {
 
 	static void removeAndCombineDuplicate() {
 		ArrayList<String> idList = new ArrayList<String>();
+		ArrayList<dataCollection> dataCollectionArray = new ArrayList<dataCollection>();
+
 		try {
 
-			ListMultimap<String, String> multiMap = ArrayListMultimap.create();
-
-			String search_query = "SELECT ARTICLE_ID from "
-					+ DataLoading.articleTable;
-
-			System.out.println(search_query);
-
+			String search_query = "SELECT * from " + DataLoading.articleTable;
 			PreparedStatement ps_search = DatabaseConnection.conn
 					.prepareStatement(search_query);
+
 			ResultSet rs = (ResultSet) ps_search.executeQuery();
+
 			DatabaseConnection.conn.commit();
+
+			Statement st = DatabaseConnection.conn.createStatement();
+			ResultSet rset = (ResultSet) st.executeQuery(search_query);
+			ResultSetMetaData md = rset.getMetaData();
+
+			Vector<String> fieldInArticleTable = new Vector<String>();
+			for (int i = 1; i <= md.getColumnCount(); i++) {
+
+				fieldInArticleTable.add(md.getColumnLabel(i));
+
+			}
 
 			while (rs.next()) {
 
-				String value = rs.getString(1);
-				idList.add(value);
-				// System.out.println("sssqqq" + value);
+				LinkedHashMap<String, String> articleData = new LinkedHashMap<String, String>();
+				ArrayList<String> keywordList = new ArrayList<String>();
+				ArrayList<String> authorList = new ArrayList<String>();
+
+				int count = md.getColumnCount();
+				for (int i = 1; i <= count - 2; i++) {
+					String kw = md.getColumnLabel(i);
+					String vl = rs.getString(i);
+					articleData.put(kw, vl);
+					//
+					// System.out.println("kkk:   " + kw);
+					// System.out.println("vvv:   " + vl);
+
+				}
+				keywordList.add(rs.getString(count - 1));
+
+				System.out.println("keywordList:   " + rs.getString(count - 1));
+				authorList.add(rs.getString(count));
+				System.out.println("authorList:   " + rs.getString(count));
+
+				dataCollection data = new dataCollection(articleData,
+						keywordList, authorList);
+
+				dataCollectionArray.add(data);
 
 			}
+
 			rs.close();
-			ps_search.close();
+
+			// ////////
+
+			// ListMultimap<String, String> multiMap =
+			// ArrayListMultimap.create();
+			//
+			// String search_query = "SELECT ARTICLE_ID from "
+			// + DataLoading.articleTable;
+			//
+			// System.out.println(search_query);
+			//
+			// PreparedStatement ps_search = DatabaseConnection.conn
+			// .prepareStatement(search_query);
+			// ResultSet rs = (ResultSet) ps_search.executeQuery();
+			// DatabaseConnection.conn.commit();
+			//
+			// while (rs.next()) {
+			//
+			// String value = rs.getString(1);
+			// idList.add(value);
+			// // System.out.println("sssqqq" + value);
+			//
+			// }
+			// rs.close();
+			// ps_search.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		ArrayList<dataCollection> dataCollectionArray = QueryFunctions
-				.getResultById(idList);
+		// ArrayList<dataCollection> dataCollectionArray = QueryFunctions
+		// .getResultById(idList);
 
 		System.out.println("size: " + dataCollectionArray.size());
 
@@ -770,16 +865,15 @@ public class QueryFunctions {
 			ArrayList<String> idList = new ArrayList<String>();
 			while (rs.next()) {
 				String id = rs.getString(1);
-//				System.out.println("id: " + id);
+				// System.out.println("id: " + id);
 				idList.add(id);
 			}
 
 			rs.close();
 			ps_search.close();
-			
-			
+
 			exportById(idList);
-			
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
