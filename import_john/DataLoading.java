@@ -4,7 +4,9 @@ import import_vunh.ArticleCollection;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,7 +32,50 @@ public class DataLoading {
 	static String kw_query = "INSERT INTO " + keywordTable
 			+ " (KEYWORD, ARTICLE_ID) VALUES (?, ?)";
 
-	public static void loadDataFromPudmed(String pathname) {
+	public static ArrayList<ArrayList<String>> separateFile(String pathname) {
+		File file = new File(pathname);
+		FileReader fileReader;
+
+		try {
+			fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+			String line;
+			ArrayList<ArrayList<String>> dataArrayArray = new ArrayList<ArrayList<String>>();
+			ArrayList<String> dataArray = new ArrayList<String>();
+			while (true) {
+				line = bufferedReader.readLine();
+				if (line == null) {
+					dataArrayArray.add(dataArray);
+					break;
+				}
+
+				if (line.isEmpty() == true) {
+					dataArrayArray.add(dataArray);
+					dataArray = new ArrayList<String>();
+					continue;
+				}
+
+				dataArray.add(line);
+			}
+
+			for (ArrayList<String> tmp : dataArrayArray) {
+				System.out.println(tmp.toString());
+			}
+			return dataArrayArray;
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public static void loadDataFromPudmed(ArrayList<String> dataArray) {
 		PreparedStatement ps_author = null;
 		PreparedStatement ps_keyword = null;
 		PreparedStatement ps_article = null;
@@ -76,13 +121,12 @@ public class DataLoading {
 
 			try {
 
-				File file = new File(pathname);
-				FileReader fileReader = new FileReader(file);
-				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				// File file = new File(pathname);
+				// FileReader fileReader = new FileReader(file);
+				// BufferedReader bufferedReader = new
+				// BufferedReader(fileReader);
 
-				String line;
-
-				while ((line = bufferedReader.readLine()) != null) {
+				for (String line : dataArray) {
 
 					if (line.contains("-")) {
 
@@ -127,8 +171,6 @@ public class DataLoading {
 					}
 				}
 
-				fileReader.close();
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -137,14 +179,14 @@ public class DataLoading {
 			System.out.println("year:" + year);
 			System.out.println("issue:" + issue);
 
-//			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
-//					year, issue, author);
-//			if (dupIdList != null) {
-//				System.out.println("duplicate,dont add");
-//				return;
-//			} else {
-//				System.out.println("no duplicate,add");
-//			}
+			// ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
+			// year, issue, author);
+			// if (dupIdList != null) {
+			// System.out.println("duplicate,dont add");
+			// return;
+			// } else {
+			// System.out.println("no duplicate,add");
+			// }
 
 			for (int w = 1; w < size; w++) {
 
@@ -199,33 +241,27 @@ public class DataLoading {
 		}
 	}
 
-	public static void loadDataFromCochrane(String pathname) {
-
-		PreparedStatement ps_author = null;
-		PreparedStatement ps_keyword = null;
-		PreparedStatement ps_article = null;
+	public static void loadDataFromCochrane(ArrayList<String> dataArray) {
 
 		try {
+
+			PreparedStatement ps_author = null;
+			PreparedStatement ps_keyword = null;
+			PreparedStatement ps_article = null;
 
 			ps_author = DatabaseConnection.conn.prepareStatement(au_query);
 			ps_keyword = DatabaseConnection.conn.prepareStatement(kw_query);
 			ps_article = DatabaseConnection.conn.prepareStatement(insert_query,
 					new String[] { "article_id" });
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			String[] keyWords = null;
+			Vector<String> authorsVector = new Vector<String>();
 
-		String[] keyWords = null;
-		Vector<String> authorsVector = new Vector<String>();
-
-		String title = null;
-		String year = null;
-		String issue = null;
-		String vol = null;
-		String author = null;
-
-		try {
+			String title = null;
+			String year = null;
+			String issue = null;
+			String vol = null;
+			String author = null;
 
 			int size = sizeOfArticle;
 			String[] matchTable = new String[size];
@@ -246,101 +282,44 @@ public class DataLoading {
 
 			LinkedHashMap<String, String> conflictedRecord1 = new LinkedHashMap<String, String>();
 
-			try {
+			for (String line : dataArray) {
 
-				File file = new File(pathname);
-				FileReader fileReader = new FileReader(file);
-				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				if (line.contains(":")) {
 
-				String line;
+					String[] tmpStr = line.split(":", 2);
+					String key = tmpStr[0];
+					String value = tmpStr[1].substring(1);
 
-				while ((line = bufferedReader.readLine()) != null) {
+					conflictedRecord1.put(key, value);
 
-					if (line.contains(":")) {
+					if (key.equals("TI"))
+						title = value;
 
-						String[] tmpStr = line.split(":", 2);
-						String key = tmpStr[0];
-						String value = tmpStr[1].substring(1);
+					if (key.equals("YR"))
+						year = value;
 
-						conflictedRecord1.put(key, value);
+					if (key.equals("VL"))
+						vol = value;
 
-						if (key.equals("TI"))
-							title = value;
+					if (key.equals("NO"))
+						issue = value;
 
-						if (key.equals("YR"))
-							year = value;
+					if (key.equals("KY"))
+						keyWords = value.split(";");
 
-						if (key.equals("VL"))
-							vol = value;
+					if (key.equals("AU")) {
+						authorsVector.add(value);
+						author = value;
+					}
 
-						if (key.equals("NO"))
-							issue = value;
+					for (int i = 0; i < size; i++) {
+						if (matchTable[i] != null)
+							if (matchTable[i].equals(key))
+								insertTable[i] = value;
 
-						if (key.equals("KY"))
-							keyWords = value.split(";");
-
-						if (key.equals("AU")) {
-							authorsVector.add(value);
-							author = value;
-						}
-
-						for (int i = 0; i < size; i++) {
-							if (matchTable[i] != null)
-								if (matchTable[i].equals(key))
-									insertTable[i] = value;
-
-						}
 					}
 				}
-
-				fileReader.close();
-
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-
-//			ArrayList<Integer> dupIdList = QueryFunctions.ifDuplicate(title,
-//					year, issue, author);
-//			if (dupIdList != null) {
-//				System.out.println("duplicate,dont add");
-//
-//				for (int i = 0; i < dupIdList.size(); i++) {
-//					System.out.println("ddddddId" + dupIdList.get(i));
-//
-//					LinkedHashMap<String, String> duplicatedId = new LinkedHashMap<String, String>();
-//					duplicatedId.put("ARTICLE_ID",
-//							String.valueOf(dupIdList.get(i)));
-//					ArrayList<dataCollection> dataList = QueryFunctions
-//							.searchJoinTable(duplicatedId);
-//
-//					for (String key : conflictedRecord1.keySet()) {
-//						System.out.println(conflictedRecord1.get(key));
-//					}
-//
-//					dataCollection data = dataList.get(0);
-//
-//					LinkedHashMap<String, String> articleMap = data.articleMap;
-//					List<String> keywordMap = data.keywordMap;
-//					List<String> authorMap = data.authorMap;
-//
-//					String strs = "";
-//					for (String str : articleMap.keySet()) {
-//						String value = articleMap.get(str);
-//						if (str.equals("ABS") == false && value != null)
-//							strs = strs + str + ": " + articleMap.get(str)
-//									+ ", ";
-//					}
-//
-//					String msg = strs + "//Author: " + authorMap.toString()
-//							+ "//Keyword: " + keywordMap.toString();
-//					System.out.println("msg: " + msg);
-//
-//				}
-//
-//				return;
-//			} else {
-//				System.out.println("no duplicate,add");
-//			}
 
 			for (int w = 1; w < size; w++) {
 
@@ -404,7 +383,7 @@ public class DataLoading {
 		File tmp = new File(path);
 		String tmpPath = tmp.getAbsolutePath();
 		System.out.println(tmpPath);
-		//ac.readFromTextFiles(tmpPath, 2);
+		// ac.readFromTextFiles(tmpPath, 2);
 		ac.readSingleTextFile(tmpPath, 2);
 	}
 

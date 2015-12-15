@@ -214,16 +214,27 @@ public class GuiManager {
 				// System.out.println(path);
 
 				if (type == 1) {
-					DataLoading.loadDataFromCochrane(path);
+
+					ArrayList<ArrayList<String>> dataArrayArray = DataLoading
+							.separateFile(path);
+					for (ArrayList<String> tmp : dataArrayArray) {
+						DataLoading.loadDataFromCochrane(tmp);
+					}
 
 				} else if (type == 2) {
-					DataLoading.loadDataFromPudmed(path);
+					ArrayList<ArrayList<String>> dataArrayArray = DataLoading
+							.separateFile(path);
+					for (ArrayList<String> tmp : dataArrayArray) {
+						DataLoading.loadDataFromPudmed(tmp);
+						
+					}
 
 				} else if (type == 3) {
 					DataLoading.loadPsyInfo(path);
 				}
 			}
 		}
+		JOptionPane.showMessageDialog(baseContainer, "loading complete");
 	}
 
 	public static void dataLoadingGui() {
@@ -917,11 +928,11 @@ public class GuiManager {
 						// System.out.println(path);
 
 						if (path.contains(PUDMED)) {
-							DataLoading.loadDataFromPudmed(path);
+							// DataLoading.loadDataFromPudmed(path);
 
 						} else if (path.contains(COCHRANE)) {
 
-							DataLoading.loadDataFromCochrane(path);
+							// DataLoading.loadDataFromCochrane(path);
 						}
 					}
 				}
