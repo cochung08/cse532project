@@ -95,6 +95,23 @@ public class GuiManager {
 		});
 
 		baseContainer.add(openButton, c);
+		
+		
+		
+		JButton removeButton = new JButton("Remove and Combine Duplicate");
+		removeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+
+				QueryFunctions.removeAndCombineDuplicate();
+				JOptionPane
+						.showMessageDialog(baseContainer,
+								"duplicate info can be found in folder ExportDuplicate");
+			}
+		});
+
+		baseContainer.add(removeButton, c);
+		
+		
 
 		// JButton openButton = new JButton("loadData");
 		// openButton.addActionListener(new ActionListener() {
@@ -133,6 +150,9 @@ public class GuiManager {
 		});
 
 		baseContainer.add(searchButton, c);
+		
+		
+		
 
 		JButton RatingButton = new JButton("Rating");
 
@@ -179,18 +199,7 @@ public class GuiManager {
 
 		baseContainer.add(finalRatingButton, c);
 
-		JButton removeButton = new JButton("Remove and Combine Duplicate");
-		removeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-
-				QueryFunctions.removeAndCombineDuplicate();
-				JOptionPane
-						.showMessageDialog(baseContainer,
-								"duplicate info can be found in folder ExportDuplicate");
-			}
-		});
-
-		baseContainer.add(removeButton, c);
+		
 
 		// exportall
 
